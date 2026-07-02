@@ -1,1 +1,9 @@
+import BooleanIsoperimetry.Cascade
+import BooleanIsoperimetry.Cube
 import BooleanIsoperimetry.Harper
+import BooleanIsoperimetry.Macaulay
+import BooleanIsoperimetry.KruskalKatona
+import BooleanIsoperimetry.Shadow
+import BooleanIsoperimetry.SetFamilyShadow
+import BooleanIsoperimetry.Compression
+import BooleanIsoperimetry.MacaulayMin
