@@ -1,5 +1,17 @@
+/-
+Copyright (c) 2026 Alexey Milovanov. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Alexey Milovanov
+-/
 import Mathlib
 import BooleanIsoperimetry.Cascade
+
+/-!
+# Macaulay increment arithmetic
+
+This file develops the increment profile of the Harper boundary function and
+the nested-cascade inequalities used by the final minimization argument.
+-/
 
 open scoped BigOperators
 
@@ -244,7 +256,7 @@ lemma HIncrement_le_of_mem_layer {n r j : ℕ} (hr : 1 ≤ r)
   have hcard_le : w.card ≤ r := by
     have := (rank_lt_binomPrefix_iff (c := r + 1) w).mp (by rw [hw]; exact hhi); omega
   have hcard_ge : r ≤ w.card := by
-    by_contra hlt; push_neg at hlt
+    by_contra hlt; push Not at hlt
     have : rank w < binomPrefix n r := (rank_lt_binomPrefix_iff (c := r) w).mpr hlt
     rw [hw] at this; omega
   have hcard : w.card = r := le_antisymm hcard_le hcard_ge
@@ -530,7 +542,7 @@ lemma cascade_lower_le_of_neighbor_lt {n a b p q : ℕ}
     (hcasc : CascadeSplit (n + 1) (a + b) p q) (hq_pos : 1 ≤ q)
     (hcase : H (n + 1) b < a) : p ≤ a := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hsum : p + q = a + b := cascade_split_add hcasc
   have hqb : q < b := by omega
   have hpHq : p ≤ H (n + 1) q := cascade_p_le_H_q hcasc hq_pos

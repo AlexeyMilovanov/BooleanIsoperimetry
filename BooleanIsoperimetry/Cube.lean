@@ -1,4 +1,17 @@
+/-
+Copyright (c) 2026 Alexey Milovanov. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Alexey Milovanov
+-/
 import Mathlib
+
+/-!
+# Boolean cube basics
+
+This file defines Boolean-cube vertices, Hamming distance, closed neighborhoods,
+simplicial order, initial segments, slicing maps, and the Harper boundary
+function `H`.
+-/
 
 open scoped BigOperators
 
@@ -799,7 +812,8 @@ The Algebraic Core of Harper's Theorem
 Embedding facts: embed0 preserves cardinality and binary value.
 -/
 lemma embed0_card {n : ℕ} (x : Cube n) : (embed0 x).card = x.card := by
-  convert Finset.card_image_of_injective _ (Fin.castSucc_injective n) using 1
+  unfold embed0
+  exact Finset.card_image_of_injective _ (Fin.castSucc_injective n)
 
 lemma embed0_cubeToNat {n : ℕ} (x : Cube n) : cubeToNat (embed0 x) = cubeToNat x := by
   simp [cubeToNat, embed0]
@@ -811,11 +825,18 @@ lemma embed1_card {n : ℕ} (x : Cube n) : (embed1 x).card = x.card + 1 := by
   unfold embed1; simp +decide [Finset.card_image_of_injective, Function.Injective]
 
 lemma embed1_cubeToNat {n : ℕ} (x : Cube n) : cubeToNat (embed1 x) = cubeToNat x + 2 ^ n := by
-  convert Finset.sum_insert ?_ using 1
-  · rw [Finset.sum_image <| by simp +decide [Fin.ext_iff] ]
-    simp +decide only [Fin.val_last, Fin.val_castSucc]
+  unfold cubeToNat embed1
+  have hlast : Fin.last n ∉ Finset.image Fin.castSucc x := by
+    intro h
+    rcases Finset.mem_image.mp h with ⟨i, _, hi⟩
+    have hval : (i : ℕ) = n := by simpa using congrArg Fin.val hi
+    exact Nat.ne_of_lt i.isLt hval
+  rw [Finset.sum_insert hlast]
+  rw [Finset.sum_image]
+  · simp +decide only [Fin.val_last, Fin.val_castSucc]
     exact add_comm _ _
-  · grind
+  · intro a _ b _ h
+    exact Fin.castSucc_injective n h
 
 /-
 Both embeddings are monotone for the simplicial order.
@@ -859,13 +880,53 @@ lemma H_succ_slice {n k : ℕ} :
           (slice1 (simplicialInitSeg (n + 1) k)).card +
       max (H n (slice1 (simplicialInitSeg (n + 1) k)).card)
           (slice0 (simplicialInitSeg (n + 1) k)).card := by
-  convert neighborhood_succ _
-  · grind +suggestions
-  · convert (card_initSeg_union _ _) |> Eq.symm using 2
-    · rw [← neighborhood_initSeg_eq]
-      rw [← slice1_initSeg_eq, ← slice0_initSeg_eq]
-    · exact H_le_cube _ _
-    · exact le_trans (Finset.card_le_univ _) (by norm_num)
+  let A : Finset (Cube (n + 1)) := simplicialInitSeg (n + 1) k
+  have hslice0 : slice0 A = simplicialInitSeg n (slice0 A).card := by
+    simpa [A] using (slice0_initSeg_eq (n := n) (k := k))
+  have hslice1 : slice1 A = simplicialInitSeg n (slice1 A).card := by
+    simpa [A] using (slice1_initSeg_eq (n := n) (k := k))
+  have hcard0 : (slice0 A).card ≤ 2 ^ n := by
+    simpa using (Finset.card_le_univ (s := slice0 A))
+  have hcard1 : (slice1 A).card ≤ 2 ^ n := by
+    simpa using (Finset.card_le_univ (s := slice1 A))
+  have h0 :
+      (neighborhood 1 (slice0 A) ∪ slice1 A).card =
+        max (H n (slice0 A).card) (slice1 A).card := by
+    have hsets :
+        neighborhood 1 (slice0 A) ∪ slice1 A =
+          neighborhood 1 (simplicialInitSeg n (slice0 A).card) ∪
+            simplicialInitSeg n (slice1 A).card :=
+      congrArg₂ (· ∪ ·) (congrArg (neighborhood 1) hslice0) hslice1
+    calc
+      (neighborhood 1 (slice0 A) ∪ slice1 A).card =
+          (neighborhood 1 (simplicialInitSeg n (slice0 A).card) ∪
+            simplicialInitSeg n (slice1 A).card).card := congrArg Finset.card hsets
+      _ = (simplicialInitSeg n (H n (slice0 A).card) ∪
+            simplicialInitSeg n (slice1 A).card).card := by
+            rw [neighborhood_initSeg_eq]
+      _ = max (H n (slice0 A).card) (slice1 A).card :=
+            card_initSeg_union (H_le_cube _ _) hcard1
+  have h1 :
+      (neighborhood 1 (slice1 A) ∪ slice0 A).card =
+        max (H n (slice1 A).card) (slice0 A).card := by
+    have hsets :
+        neighborhood 1 (slice1 A) ∪ slice0 A =
+          neighborhood 1 (simplicialInitSeg n (slice1 A).card) ∪
+            simplicialInitSeg n (slice0 A).card :=
+      congrArg₂ (· ∪ ·) (congrArg (neighborhood 1) hslice1) hslice0
+    calc
+      (neighborhood 1 (slice1 A) ∪ slice0 A).card =
+          (neighborhood 1 (simplicialInitSeg n (slice1 A).card) ∪
+            simplicialInitSeg n (slice0 A).card).card := congrArg Finset.card hsets
+      _ = (simplicialInitSeg n (H n (slice1 A).card) ∪
+            simplicialInitSeg n (slice0 A).card).card := by
+            rw [neighborhood_initSeg_eq]
+      _ = max (H n (slice1 A).card) (slice0 A).card :=
+            card_initSeg_union (H_le_cube _ _) hcard0
+  change (neighborhood 1 A).card =
+    max (H n (slice0 A).card) (slice1 A).card +
+      max (H n (slice1 A).card) (slice0 A).card
+  rw [neighborhood_succ A, h0, h1]
 
 -- ==========================================
 -- MACAULAY / BINOMIAL CASCADE LAYER

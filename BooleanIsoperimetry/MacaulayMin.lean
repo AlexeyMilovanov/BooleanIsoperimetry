@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Alexey Milovanov. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Alexey Milovanov
+-/
 import Mathlib
 import BooleanIsoperimetry.Cube
 import BooleanIsoperimetry.Cascade
@@ -6,12 +11,19 @@ import BooleanIsoperimetry.SimplicialCompression
 import BooleanIsoperimetry.Compression
 import BooleanIsoperimetry.Shadow
 
+/-!
+# Scalar Macaulay minimization
+
+This file packages the set-family compression and shadow estimates into scalar
+Macaulay minimization lemmas consumed by the final Harper theorem.
+-/
+
 open scoped BigOperators
 open Finset
 
 namespace BooleanIsoperimetry
 
-/-!
+/-
 # Scalar Macaulay minimization as a corollary of the PDF set-family layer
 
 This module sits **downstream** of the Frankl–Füredi paired-compression layer
@@ -87,7 +99,7 @@ lemma macaulay_extremal_pos_step (n : ℕ)
       by_cases hcase : a ≤ H n b
       · rw [boundaryCost_eq_case_le ha hba hcase]
         exact macaulay_extremal_pos_step_LE n ih ha hb hp hq hpq hcasc hq_pos hba hcase
-      · push_neg at hcase
+      · push Not at hcase
         rw [boundaryCost_eq_case_gt ha hba hcase]
         exact macaulay_extremal_pos_step_GT n ih ha hb hp hq hpq hcasc hq_pos hba hcase
   | inr hab =>
@@ -99,7 +111,7 @@ lemma macaulay_extremal_pos_step (n : ℕ)
       by_cases hcase : b ≤ H n a
       · rw [boundaryCost_eq_case_le hb hab hcase]
         exact macaulay_extremal_pos_step_LE n ih hb ha hp hq hpq_symm hcasc_symm hq_pos hab hcase
-      · push_neg at hcase
+      · push Not at hcase
         rw [boundaryCost_eq_case_gt hb hab hcase]
         exact macaulay_extremal_pos_step_GT n ih hb ha hp hq hpq_symm hcasc_symm hq_pos hab hcase
 
@@ -117,7 +129,7 @@ lemma macaulay_bc_min (n : ℕ)
     max (H n p) q + max (H n q) p ≤ max (H n a) b + max (H n b) a := by
   by_cases hq_pos : 1 ≤ q
   · exact macaulay_extremal_pos_step n ih ha hb hp hq hpq hcasc hq_pos
-  · push_neg at hq_pos
+  · push Not at hq_pos
     have hq0 : q = 0 := by omega
     subst hq0
     have hmax1 : max (H n p) 0 = H n p := max_eq_left (Nat.zero_le _)

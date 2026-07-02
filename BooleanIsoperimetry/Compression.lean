@@ -1,9 +1,22 @@
+/-
+Copyright (c) 2026 Alexey Milovanov. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Alexey Milovanov
+-/
 import Mathlib
 import BooleanIsoperimetry.Cube
 import BooleanIsoperimetry.Cascade
 import BooleanIsoperimetry.SimplicialCompression
 import BooleanIsoperimetry.KruskalKatona
 import BooleanIsoperimetry.LayerWindows
+
+/-!
+# Frankl-Furedi compression layer
+
+This file formalizes paired compression and terminalization infrastructure for
+families in the Boolean cube, connecting compressed families to canonical
+simplicial initial segments.
+-/
 
 open scoped BigOperators
 open scoped FinsetFamily
@@ -701,7 +714,7 @@ lemma familyUp_potential_lt_of_blockLt {N : ℕ} {U V : Cube N} {A : Finset (Cub
     · exact le_rfl
   · have hex : ∃ S ∈ A, familyUpMap U V A S ≠ S := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       apply hne
       unfold familyUp
       rw [Finset.image_congr (g := id) (fun S hS => hcon S hS), Finset.image_id]
@@ -1373,7 +1386,7 @@ lemma not_lowerLevelSaturated_exists_witness {N : ℕ} {A : Finset (Cube N)}
     ∃ (T S : Cube N), T ∉ A ∧ S ∈ A ∧ T.card < S.card := by
   classical
   unfold IsLowerLevelSaturated at h
-  push_neg at h
+  push Not at h
   rcases h with ⟨T, S, hcard, hS, hT⟩
   exact ⟨T, S, hT, hS, hcard⟩
 
@@ -1607,7 +1620,7 @@ lemma minDelta_pair_admissible_primal {N : ℕ} {A : Finset (Cube N)}
   intro x hx
   by_contra hcontra
   simp only [familyUp_eq_self_iff] at hcontra
-  push_neg at hcontra
+  push Not at hcontra
   have hU_nonempty : (S \ T).Nonempty := by
     by_contra hE
     simp only [not_nonempty_iff_eq_empty] at hE
@@ -1648,7 +1661,7 @@ lemma minDelta_pair_admissible_primal {N : ℕ} {A : Finset (Cube N)}
       · intro h
         have ha_Ry := h.1
         have ha_not_Ty := h.2
-        push_neg at ha_not_Ty
+        push Not at ha_not_Ty
         have ha_not_Ry_Uy := ha_not_Ty.1
         by_contra h_not_Uy
         exact h_not_Uy (ha_not_Ry_Uy ha_Ry)
@@ -1692,7 +1705,7 @@ lemma minDelta_pair_admissible_dual_A {N : ℕ} {A : Finset (Cube N)}
   intro y hy
   by_contra hcontra
   simp only [familyUp_eq_self_iff] at hcontra
-  push_neg at hcontra
+  push Not at hcontra
   have hV_nonempty : (T \ S).Nonempty := by
     by_contra hE
     simp only [not_nonempty_iff_eq_empty] at hE
@@ -1732,7 +1745,7 @@ lemma minDelta_pair_admissible_dual_A {N : ℕ} {A : Finset (Cube N)}
       · intro h
         have ha_Rx := h.1
         have ha_not_Tx := h.2
-        push_neg at ha_not_Tx
+        push Not at ha_not_Tx
         have ha_not_Rx_Uy := ha_not_Tx.1
         by_contra h_not_Uy
         exact h_not_Uy (ha_not_Rx_Uy ha_Rx)
@@ -1835,7 +1848,7 @@ lemma downFixed_not_lowerSat_exists_levelBlock {N : ℕ} {A : Finset (Cube N)}
     refine ⟨hS, ?_⟩
     split_ifs with h_if
     · exact hblock
-    · push_neg at h_if
+    · push Not at h_if
       have h_subset : S \ T ⊆ S := sdiff_subset
       have h_disj : Disjoint (T \ S) S := Disjoint.symm disjoint_sdiff
       have h_not_in : blockReplace (S \ T) (T \ S) S ∉ A := by
@@ -2113,7 +2126,7 @@ theorem lowerSatDownFixed_descent_step {N : ℕ} (A : Finset (Cube N))
     exact ⟨A', paperLevelBlockMove_card hmove,
       paperLevelBlockMove_neighborhood_card_le hmove, paperLevelBlockMove_potential_lt hmove⟩
   · unfold IsCoordinateDownFixed at hdf
-    push_neg at hdf
+    push Not at hdf
     obtain ⟨i, hi⟩ := hdf
     have hne : coordinateDown i A ≠ A := by
       intro heq

@@ -1,10 +1,22 @@
+/-
+Copyright (c) 2026 Alexey Milovanov. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Alexey Milovanov
+-/
 import Mathlib
 import BooleanIsoperimetry.Macaulay
 import BooleanIsoperimetry.Compression
 
+/-!
+# Upper-shadow and Macaulay layer
+
+This file connects Kruskal-Katona upper-shadow estimates to the Macaulay
+exchange inequalities used in Harper's theorem.
+-/
+
 open scoped BigOperators
 
-/-!
+/-
 # Upper-shadow / Macaulay layer for Harper's theorem
 
 This module isolates the **Frankl–Füredi / Kruskal–Katona / Macaulay shadow

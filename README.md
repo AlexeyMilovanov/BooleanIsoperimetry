@@ -29,7 +29,7 @@ presents the Frankl-Furedi proof in a more expanded form.
 
 ## Status
 
-- Lean version: `leanprover/lean4:v4.28.0`.
+- Lean version: `leanprover/lean4:v4.31.0`.
 - Mathlib version: pinned by `lake-manifest.json`.
 - The project builds with `lake build`.
 - The formal proof of `harper_theorem` is sorry-free.
@@ -289,7 +289,7 @@ the standard mathlib linter set, and keeps `relaxedAutoImplicit` disabled.
 Pins the Lean toolchain:
 
 ```text
-leanprover/lean4:v4.28.0
+leanprover/lean4:v4.31.0
 ```
 
 ### `lake-manifest.json`

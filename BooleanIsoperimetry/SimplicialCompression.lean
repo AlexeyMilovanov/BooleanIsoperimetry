@@ -1,7 +1,19 @@
+/-
+Copyright (c) 2026 Alexey Milovanov. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Alexey Milovanov
+-/
 import Mathlib
 import BooleanIsoperimetry.Cube
 import BooleanIsoperimetry.Cascade
 import BooleanIsoperimetry.Macaulay
+
+/-!
+# Simplicial coordinate compression
+
+This file defines coordinate up/down compression operations on Boolean-cube
+families and proves basic neighborhood monotonicity and slice-pair facts.
+-/
 
 open scoped BigOperators
 open Finset
@@ -522,7 +534,7 @@ moves at least one vertex down. -/
 lemma exists_downMap_ne_of_ne {N : ℕ} (i : Fin N) (A : Finset (Cube N))
     (hne : coordinateDown i A ≠ A) : ∃ x ∈ A, downMap i A x ≠ x := by
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   apply hne
   rw [coordinateDown_eq_image, Finset.image_congr (g := id) (fun x hx => hcon x hx),
     Finset.image_id]

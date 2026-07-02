@@ -1,5 +1,18 @@
+/-
+Copyright (c) 2026 Alexey Milovanov. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Alexey Milovanov
+-/
 import Mathlib
 import BooleanIsoperimetry.Cube
+
+/-!
+# Binomial cascade arithmetic
+
+This file develops binomial-prefix and Macaulay-cascade infrastructure for
+simplicial initial segments in the Boolean cube, including the slice recurrence
+for the Harper boundary function `H`.
+-/
 
 open scoped BigOperators
 
@@ -96,7 +109,7 @@ lemma binomPrefix_mono (n : ℕ) {r s : ℕ} (h : r ≤ s) :
   exact Finset.sum_le_sum_of_subset (Finset.range_mono h)
 
 lemma binomPrefix_full (n : ℕ) : binomPrefix n (n + 1) = 2 ^ n := by
-  convert Nat.sum_range_choose n using 1
+  simpa [binomPrefix] using Nat.sum_range_choose n
 
 lemma choose_eq_zero_of_gt {n r : ℕ} (h : n < r) : Nat.choose n r = 0 := by
   exact Nat.choose_eq_zero_of_lt h
@@ -309,7 +322,7 @@ lemma rank_lt_binomPrefix_iff {n c : ℕ} (w : Cube n) :
 lemma binomPrefix_card_le_rank {n : ℕ} (w : Cube n) :
     binomPrefix n w.card ≤ rank w := by
   by_contra hlt
-  push_neg at hlt
+  push Not at hlt
   exact absurd ((rank_lt_binomPrefix_iff w).mp hlt) (lt_irrefl _)
 
 /-- Layer upper bound on `rank`. -/

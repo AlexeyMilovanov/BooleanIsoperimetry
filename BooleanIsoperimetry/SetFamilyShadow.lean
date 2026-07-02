@@ -1,8 +1,20 @@
+/-
+Copyright (c) 2026 Alexey Milovanov. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Alexey Milovanov
+-/
 import Mathlib
 import BooleanIsoperimetry.Cube
 import BooleanIsoperimetry.Macaulay
 import BooleanIsoperimetry.Shadow
 import BooleanIsoperimetry.KruskalKatona
+
+/-!
+# Set-family shadow corollaries
+
+This file exposes thin numeric corollaries of the upstream Kruskal-Katona
+upper-shadow theorem in the notation used by the Harper proof.
+-/
 
 open scoped BigOperators
 
@@ -10,7 +22,7 @@ open Finset
 
 namespace BooleanIsoperimetry
 
-/-! # Set-family shadow corollaries (thin wrapper)
+/- # Set-family shadow corollaries (thin wrapper)
 
 The Kruskal–Katona core (`layer`, `layerInitSeg`, `upperLayerShadow`,
 `upperLayerShadow_min`, and the numeric value `upperShadowVal` with its minimum

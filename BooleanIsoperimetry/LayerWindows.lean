@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Alexey Milovanov. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Alexey Milovanov
+-/
 import BooleanIsoperimetry.Cube
 import BooleanIsoperimetry.KruskalKatona
 import BooleanIsoperimetry.Macaulay
@@ -300,11 +305,29 @@ lemma suffix_layerWindowRemainder_eq (N m k : ℕ) (hm : m ≤ 2 ^ N) :
   -- elements in the initial segment with rank at least `binomPrefix N k`.
   have h_card : ∑ r ∈ Finset.Ico k (N + 2), layerWindowRemainder N r m =
       (simplicialInitSeg N m \ simplicialInitSeg N (min m (binomPrefix N k))).card := by
-    convert sum_Ico_layerCount_eq_filter_card_ge N k (simplicialInitSeg N m) using 1
-    congr with x
-    simp only [simplicialInitSeg, lt_inf_iff, rank_lt_binomPrefix_iff, mem_sdiff, mem_filter,
-      mem_univ, true_and, not_and, not_lt, and_congr_right_iff, Classical.imp_iff_right_iff]
-    exact fun h => Or.inl h
+    have hsum :
+        ∑ r ∈ Finset.Ico k (N + 2), layerWindowRemainder N r m =
+          ((simplicialInitSeg N m).filter (fun x => k ≤ x.card)).card := by
+      simpa [layerWindowRemainder] using
+        sum_Ico_layerCount_eq_filter_card_ge N k (simplicialInitSeg N m)
+    have hfilter :
+        (simplicialInitSeg N m).filter (fun x => k ≤ x.card) =
+          simplicialInitSeg N m \ simplicialInitSeg N (min m (binomPrefix N k)) := by
+      ext x
+      simp only [simplicialInitSeg, mem_filter, mem_univ, true_and, mem_sdiff]
+      constructor
+      · rintro ⟨hrank, hcard⟩
+        refine ⟨hrank, ?_⟩
+        intro hmin
+        have hrank_binom : rank x < binomPrefix N k := lt_of_lt_of_le hmin (min_le_right _ _)
+        have hcard_lt : x.card < k :=
+          (rank_lt_binomPrefix_iff (N := N) (r := k) (x := x)).mp hrank_binom
+        omega
+      · rintro ⟨hrank, hnot⟩
+        refine ⟨hrank, ?_⟩
+        exact Nat.le_of_not_lt fun hcard_lt =>
+          hnot (lt_min hrank ((rank_lt_binomPrefix_iff (N := N) (r := k) (x := x)).mpr hcard_lt))
+    rw [hsum, hfilter]
   rw [h_card, Finset.card_sdiff]
   rw [Finset.inter_eq_left.mpr, card_simplicialInitSeg, card_simplicialInitSeg]
   · grind

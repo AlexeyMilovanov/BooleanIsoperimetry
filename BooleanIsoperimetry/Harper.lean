@@ -1,6 +1,18 @@
+/-
+Copyright (c) 2026 Alexey Milovanov. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Alexey Milovanov
+-/
 import Mathlib
 import BooleanIsoperimetry.Macaulay
 import BooleanIsoperimetry.Shadow
+
+/-!
+# Harper's vertex-isoperimetric theorem
+
+This file assembles the compression, Macaulay, Kruskal-Katona, and scalar
+recurrence layers into the final sorry-free proof of Harper's theorem.
+-/
 
 open scoped BigOperators
 
@@ -744,7 +756,7 @@ lemma boundaryCost_le_of_lower_interleaves_step_live
     · have hbHa : b ≤ H (n + 1) a := le_trans hba (H_ge_self (n + 1) a ha_cap)
       rw [max_eq_left hbHa, max_eq_left hcase]
       exact BooleanIsoperimetry.H_shadow_LE_sum ha_cap hb_cap hpq_casc hq_pos hba hcase
-    · push_neg at hcase
+    · push Not at hcase
       have hbHa : b ≤ H (n + 1) a := le_trans hba (H_ge_self (n + 1) a ha_cap)
       rw [max_eq_left hbHa, max_eq_right (le_of_lt hcase)]
       exact BooleanIsoperimetry.H_shadow_GT_sum ha_cap hb_cap hpq_casc hq_pos hba hcase
@@ -861,7 +873,7 @@ lemma boundaryCost_le_of_LE_GT_sums (n : ℕ)
     · have hbHa : b ≤ H (n + 1) a := le_trans hba (H_ge_self (n + 1) a ha)
       rw [max_eq_left hbHa, max_eq_left hcase]
       exact harper_macaulay_LE_sum_pos n ih ha _hb hcasc hq_pos hba hcase
-    · push_neg at hcase
+    · push Not at hcase
       have hbHa : b ≤ H (n + 1) a := le_trans hba (H_ge_self (n + 1) a ha)
       rw [max_eq_left hbHa, max_eq_right (le_of_lt hcase)]
       exact harper_macaulay_GT_sum n ih ha _hb hcasc hq_pos hba hcase
@@ -1848,7 +1860,7 @@ lemma harper_subadd_le
   by_cases hq_pos : 1 ≤ q
   · rw [canonical_boundaryCost_eq_H_add hp hq hq_pos hcasc]
     exact harper_subadd_le_cascade_pos n ih ha hb hp hq hq_pos hb_le_a hcase hpq hcasc
-  · push_neg at hq_pos
+  · push Not at hq_pos
     have hq0 : q = 0 := by omega
     subst hq0
     have hpq_zero : p = a + b := by omega
@@ -1885,7 +1897,7 @@ lemma harper_subadd_gt
   by_cases hq_pos : 1 ≤ q
   · rw [canonical_boundaryCost_eq_H_add hp hq hq_pos hcasc]
     exact harper_subadd_gt_cascade_pos n ih ha hb hp hq hq_pos hb_le_a hcase hpq hcasc
-  · push_neg at hq_pos
+  · push Not at hq_pos
     have hq0 : q = 0 := by omega
     subst hq0
     have hpq_zero : p = a + b := by omega
@@ -1942,10 +1954,10 @@ lemma harper_bc_min (n : ℕ)
       by_cases hcase : a ≤ H n b
       · rw [boundaryCost_eq_case_le ha hb_le_a hcase]
         exact harper_bc_min_case_le n ih ha hb hp hq hq_pos hb_le_a hcase hpq hcasc
-      · push_neg at hcase
+      · push Not at hcase
         rw [boundaryCost_eq_case_gt ha hb_le_a hcase]
         exact harper_bc_min_case_gt n ih ha hb hp hq hq_pos hb_le_a hcase hpq hcasc
-    · push_neg at hq_pos
+    · push Not at hq_pos
       have hq0 : q = 0 := by omega
       subst hq0
       have hpq_zero : p = a + b := by omega
@@ -1963,10 +1975,10 @@ lemma harper_bc_min (n : ℕ)
       by_cases hcase : b ≤ H n a
       · rw [boundaryCost_eq_case_le hb ha_le_b hcase]
         exact harper_bc_min_case_le n ih hb ha hp hq hq_pos ha_le_b hcase hpq_symm hcasc_symm
-      · push_neg at hcase
+      · push Not at hcase
         rw [boundaryCost_eq_case_gt hb ha_le_b hcase]
         exact harper_bc_min_case_gt n ih hb ha hp hq hq_pos ha_le_b hcase hpq_symm hcasc_symm
-    · push_neg at hq_pos
+    · push Not at hq_pos
       have hq0 : q = 0 := by omega
       subst hq0
       have hpq_zero : p = b + a := by omega

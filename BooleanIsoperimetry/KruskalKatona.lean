@@ -1,7 +1,19 @@
+/-
+Copyright (c) 2026 Alexey Milovanov. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Alexey Milovanov
+-/
 import Mathlib
 import BooleanIsoperimetry.Cube
 import BooleanIsoperimetry.Cascade
 import BooleanIsoperimetry.Macaulay
+
+/-!
+# Kruskal-Katona upper-shadow core
+
+This file proves the set-family upper-shadow minimization theorem used by the
+Boolean-isoperimetry argument.
+-/
 
 open scoped BigOperators
 open scoped FinsetFamily
@@ -11,7 +23,7 @@ open Finset.Colex
 
 namespace BooleanIsoperimetry
 
-/-! # Kruskal–Katona upper-shadow core (relocated upstream of `Compression`).
+/- # Kruskal–Katona upper-shadow core (relocated upstream of `Compression`).
 
 This module carries the genuine set-family Kruskal–Katona theorem
 `upperLayerShadow_min` and its numeric corollary `upperShadowVal_numeric_min`,
