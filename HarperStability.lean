@@ -5,3 +5,4 @@ import HarperStability.Reductions
 import HarperStability.Process
 import HarperStability.Core
 import HarperStability.Assembly
+import HarperStability.Statement

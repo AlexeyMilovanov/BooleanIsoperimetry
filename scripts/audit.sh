@@ -4,12 +4,12 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 echo "== escape hatch grep =="
-if grep -RInE '\b(axiom|admit|unsafe|implemented_by|native_decide)\b|set_option maxHeartbeats 0' HarperStability *.lean 2>/dev/null; then
+if grep -RInE --include='*.lean' '\b(axiom|admit|unsafe|implemented_by|native_decide)\b|set_option maxHeartbeats 0' HarperStability *.lean 2>/dev/null; then
   echo "ERROR: hard escape hatch found"
   exit 1
 fi
 
-if grep -RInE '\bsorry\b' HarperStability *.lean 2>/dev/null; then
+if grep -RInE --include='*.lean' '\bsorry\b' HarperStability *.lean 2>/dev/null; then
   if [[ "${STRICT_NO_SORRY:-0}" == "1" ]]; then
     echo "ERROR: sorry found in strict proof-stage mode"
     exit 1
@@ -45,7 +45,7 @@ check_no_external_imports() {
   fi
 }
 
-check_allowed_imports HarperStability.lean 'Interface|Volume|Entropy|Reductions|Process|Core|Assembly'
+check_allowed_imports HarperStability.lean 'Interface|Volume|Entropy|Reductions|Process|Core|Assembly|Statement'
 check_allowed_imports HarperStability/Interface.lean 'Interface'
 check_allowed_imports HarperStability/Volume.lean 'Volume'
 check_allowed_imports HarperStability/Entropy.lean 'Entropy'

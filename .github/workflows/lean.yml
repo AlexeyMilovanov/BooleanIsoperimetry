@@ -5,25 +5,14 @@ on:
   pull_request:
 
 jobs:
-  build-and-skeleton-audit:
+  build-and-audit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: leanprover/lean-action@v1
         with:
           build-args: HarperStability
-      - name: Skeleton audit
-        run: bash scripts/audit.sh
-
-  proof-stage-gate:
-    if: startsWith(github.ref, 'refs/tags/proof-')
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: leanprover/lean-action@v1
-        with:
-          build-args: HarperStability
-      - name: Strict proof-stage audit
+      - name: Strict audit (no sorry, clean axioms, frozen interface)
         env:
           STRICT_NO_SORRY: "1"
           STRICT_AXIOMS: "1"
