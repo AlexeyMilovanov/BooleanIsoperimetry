@@ -1,0 +1,13 @@
+*.c
+/.DS_Store
+*.ilean
+/interface_part_reviews/
+/.lake/
+/.manual_merge_backups/
+*.o
+*.olean
+*.prof
+/proof_loop_runs/
+/reviews/
+*.so
+*.trace

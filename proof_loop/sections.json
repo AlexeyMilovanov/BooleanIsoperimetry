@@ -1,0 +1,505 @@
+[
+  {
+    "id": "P1_geometry_volume",
+    "title": "Geometry and volume calculus",
+    "module": "HarperStability.Volume",
+    "files": [
+      "HarperStability/Volume.lean",
+      "HarperStability/Volume/Basic.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean"
+    ],
+    "targets": [
+      "BallVolumeTwoSidedStatement",
+      "VPlusStatement",
+      "InteriorVStatement",
+      "InteriorVolumeCalculusStatement"
+    ],
+    "notes": "Keep compatibility with BooleanIsoperimetry. This section should prove the volume/radius calculus used by R1/R2/R3."
+  },
+  {
+    "id": "P2_entropy_probability",
+    "title": "Finite probability and entropy toolkit",
+    "module": "HarperStability.Entropy",
+    "files": [
+      "HarperStability/Entropy.lean",
+      "HarperStability/Entropy/Basic.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean"
+    ],
+    "targets": [
+      "Sublinear",
+      "pOn",
+      "uE",
+      "uH",
+      "uCondH",
+      "uCondVar",
+      "varianceBudgetLE",
+      "expectedEstimatorError"
+    ],
+    "notes": "Build finite counting-probability entropy lemmas and the process estimates used by S1-S7."
+  },
+  {
+    "id": "P3a_reductions_r2_hbl",
+    "title": "Reductions R2: Q to HBL",
+    "module": "HarperStability.Reductions.R2HBL",
+    "files": [
+      "HarperStability/Reductions/R2HBL.lean",
+      "HarperStability/Reductions/Basic.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Volume/Basic.lean",
+      "HarperStability/Entropy/Basic.lean"
+    ],
+    "targets": [
+      "r2_hbl_from_q_and_dp",
+      "R2_skeleton"
+    ],
+    "notes": "Split from P3. Focus only on the remaining R2 QData/HBL assembly; do not edit R3Fiber. Gemini1/Codex helper work has been preserved in this file."
+  },
+  {
+    "id": "P3b_reductions_r3_fiber",
+    "title": "Reductions R3: fiber expected-log lower bound",
+    "module": "HarperStability.Reductions.R3Fiber",
+    "files": [
+      "HarperStability/Reductions/R3Fiber.lean",
+      "HarperStability/Reductions/Basic.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Volume/Basic.lean",
+      "HarperStability/Entropy/Basic.lean"
+    ],
+    "targets": [
+      "r3_fiber_log_lower",
+      "R3_skeleton"
+    ],
+    "notes": "Split from P3. Focus only on the sparse-fiber expected-log lower bound; do not edit R2HBL."
+  },
+  {
+    "id": "P4_process_s1_s4",
+    "title": "Process layer S1-S4",
+    "module": "HarperStability.Process",
+    "files": [
+      "HarperStability/Process.lean",
+      "HarperStability/Process/Basic.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Entropy/Basic.lean"
+    ],
+    "targets": [
+      "S1Statement",
+      "S2Statement",
+      "S3Statement",
+      "S4Statement",
+      "blockRegular",
+      "blockRegularFamily",
+      "binnedFoldField"
+    ],
+    "notes": "Formalize the observer/window process, field construction, and the same-bin preparation for S5."
+  },
+  {
+    "id": "P5a_core_s6_estimator",
+    "title": "Core layer S6 estimator bounds",
+    "module": "HarperStability.Core.S6Estimator",
+    "files": [
+      "HarperStability/Core/S6Estimator.lean",
+      "HarperStability/Core/Basic.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Process/Basic.lean",
+      "HarperStability/Entropy/Basic.lean"
+    ],
+    "targets": [
+      "center_majority_error_le_twoCluster",
+      "s6_expectedEstimatorError_le"
+    ],
+    "notes": "P5 split: finite fiber/two-cluster estimator wrapper and random-window averaging leaf."
+  },
+  {
+    "id": "P5b_core_s6_envelope",
+    "title": "Core layer S6 entropy envelope",
+    "module": "HarperStability.Core.S6",
+    "files": [
+      "HarperStability/Core/S6.lean",
+      "HarperStability/Core/S6Estimator.lean",
+      "HarperStability/Core/Basic.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Process/Basic.lean",
+      "HarperStability/Entropy/Basic.lean"
+    ],
+    "targets": [
+      "s6_diagonal_entropy_envelope",
+      "S6_skeleton"
+    ],
+    "notes": "P5 split: diagonal p->0 entropy envelope and S6 assembly, depending on S6Estimator."
+  },
+  {
+    "id": "P5c_core_s5_atom",
+    "title": "Core layer S5 heavy atom infrastructure",
+    "module": "HarperStability.Core.S5",
+    "files": [
+      "HarperStability/Core/S5.lean",
+      "HarperStability/Core/Basic.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Process/Basic.lean",
+      "HarperStability/Entropy/Basic.lean"
+    ],
+    "targets": [
+      "S5_skeleton"
+    ],
+    "notes": "P5 split: S5 heavy-atom/KL/same-bin assembly. Helper lemmas remain in Core.Basic."
+  },
+  {
+    "id": "P5d_core_s7_heavy_ball",
+    "title": "Core layer S7 heavy-ball assembly",
+    "module": "HarperStability.Core.S7",
+    "files": [
+      "HarperStability/Core/S7.lean",
+      "HarperStability/Core/Basic.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Process/Basic.lean",
+      "HarperStability/Entropy/Basic.lean"
+    ],
+    "targets": [
+      "S7_skeleton"
+    ],
+    "notes": "P5 split: final heavy-ball assembly from S5/S6/R3 process statements."
+  },
+  {
+    "id": "P6_assembly",
+    "title": "Assembly and theorem wiring",
+    "module": "HarperStability.Assembly",
+    "files": [
+      "HarperStability/Assembly.lean",
+      "HarperStability/Assembly/Basic.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability.lean",
+      "scripts/audit.sh",
+      "scripts/audit_axioms.lean"
+    ],
+    "targets": [
+      "component_package_skeleton",
+      "main_from_components",
+      "A0Statement"
+    ],
+    "notes": "Keep final glue non-circular and audit-clean. This section should remain mostly theorem-wiring."
+  },
+  {
+    "id": "P5c1_core_s5_kl",
+    "title": "Core S5 leaf: KL tilt",
+    "module": "HarperStability.Core.S5KL",
+    "files": [
+      "HarperStability/Core/S5KL.lean",
+      "HarperStability/Core/Basic.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Entropy/Basic.lean",
+      "HarperStability/Core/S5.lean"
+    ],
+    "targets": [
+      "s5_kl_tilt"
+    ],
+    "notes": "S5 decomposition leaf 1/4. Exact finite inequality: chain rule for KL along the prefix filtration (telescoping fiber products), Bernoulli Pinsker (one-variable calculus), Jensen for sqrt, Cauchy-Schwarz over coordinates. Do NOT change the statement; do not touch other files."
+  },
+  {
+    "id": "P5c2_core_s5_transfer",
+    "title": "Core S5 leaf: step-entropy transfer",
+    "module": "HarperStability.Core.S5Transfer",
+    "files": [
+      "HarperStability/Core/S5Transfer.lean",
+      "HarperStability/Core/Basic.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Entropy/Basic.lean",
+      "HarperStability/Core/S5.lean"
+    ],
+    "targets": [
+      "s5_step_entropy_transfer"
+    ],
+    "notes": "S5 decomposition leaf 2/4. Triangle for uE, pointwise |H a - H b| <= H|a-b| (H-prime decreasing + FTC-free monotonicity), finite Jensen for concave binEntropy, H y <= 2 sqrt y. Do NOT change the statement; do not touch other files."
+  },
+  {
+    "id": "P5c3_core_s5_separation",
+    "title": "Core S5 leaf: same-bin separation",
+    "module": "HarperStability.Core.S5Separation",
+    "files": [
+      "HarperStability/Core/S5Separation.lean",
+      "HarperStability/Core/Basic.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Entropy/Basic.lean",
+      "HarperStability/Core/S5.lean"
+    ],
+    "targets": [
+      "s5_same_bin_separation"
+    ],
+    "notes": "S5 decomposition leaf 3/4. One-sided same-bin argument with explicit constant eps*mu0/2; key calculus fact (b-a)(1-a-b) <= H b - H a on [0,1/2] via psi(s)=log((1-s)/s)-(1-2s) decreasing. Self-contained: do NOT import Reductions. Do NOT change the statement."
+  },
+  {
+    "id": "P5c4_core_s5_glue",
+    "title": "Core S5 glue: heavy atoms have few deviant bins",
+    "module": "HarperStability.Core.S5",
+    "files": [
+      "HarperStability/Core/S5.lean",
+      "HarperStability/Core/S5KL.lean",
+      "HarperStability/Core/S5Transfer.lean",
+      "HarperStability/Core/S5Separation.lean",
+      "HarperStability/Core/Basic.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Entropy/Basic.lean"
+    ],
+    "targets": [
+      "s5_heavy_atom_bad_bins_bound"
+    ],
+    "notes": "S5 decomposition glue 4/4. Pure assembly following the docstring recipe: atom is fat+pinned for s5_atomQ, blockRegular via s5_sFam_blockRegular, S1 on the atom, then s5_same_bin_separation + hstep_eq_uE_binEntropy_rho + s5_step_entropy_transfer + s5_kl_tilt + Markov. The three leaf lemmas may still carry sorry - cite them as facts. Only Core/S5.lean is mergeable; do not touch other files."
+  },
+  {
+    "id": "P5a2_core_s6_window",
+    "title": "Core S6 leaf: bad-window Chebyshev mass bound",
+    "module": "HarperStability.Core.S6Window",
+    "files": [
+      "HarperStability/Core/S6Window.lean",
+      "HarperStability/Core/Basic.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Entropy/Basic.lean",
+      "HarperStability/Core/S6Estimator.lean",
+      "HarperStability/Core/S6.lean"
+    ],
+    "targets": [
+      "s6_badWindow_mass_le"
+    ],
+    "notes": "Deferred tail of s6_expectedEstimatorError_le. Binomial Chebyshev only (no Hoeffding needed): marginal identities via insert-bijection (template: core_windowProb_reindex_le in S6Estimator.lean) or Finset.prod_add, second moment m*p*(1-p), Markov comparison. Handle m=0 first (bad sum empty, RHS p/0=0). Do NOT change the statement; do not touch other files."
+  },
+  {
+    "id": "E1_volume_eff",
+    "title": "Effective volume toolbox (log slack)",
+    "module": "HarperStability.Volume.Effective",
+    "files": [
+      "HarperStability/Volume/Effective.lean",
+      "HarperStability/Interface/Effective.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Volume/Basic.lean",
+      "HarperStability/Volume/BallEntropy.lean"
+    ],
+    "targets": [
+      "ball_volume_two_sided_eff",
+      "interior_volume_calculus_eff"
+    ],
+    "notes": "v0.3 effective pass. Interface/Effective.lean is HASH-FROZEN: never edit it; adapt the proof, not the contract. Reuse the proved v0.2 theorems and the effEnv toolkit (le_effEnv, effEnv_mono, effGeo_scale, effEnv_comp; Sublinear facts in Assembly/Effective.lean are NOT importable from workers). Follow the route in the file docstring."
+  },
+  {
+    "id": "E2_r3_eff",
+    "title": "Effective R3: block regularity at grade 2",
+    "module": "HarperStability.Reductions.EffectiveR3",
+    "files": [
+      "HarperStability/Reductions/EffectiveR3.lean",
+      "HarperStability/Interface/Effective.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Reductions/Basic.lean",
+      "HarperStability/Reductions/R3Fiber.lean"
+    ],
+    "targets": [
+      "r3_eff"
+    ],
+    "notes": "v0.3 effective pass. Interface/Effective.lean is HASH-FROZEN: never edit it; adapt the proof, not the contract. Reuse the proved v0.2 theorems and the effEnv toolkit (le_effEnv, effEnv_mono, effGeo_scale, effEnv_comp; Sublinear facts in Assembly/Effective.lean are NOT importable from workers). Follow the route in the file docstring. v0.3.2 flip (2026-07-10): R3Eff and both leaves are now SIGMA-UNIFORM (exists-K before sigma; QData compact part quantified as reals, Q rebuilt as an anonymous literal). The wrapper and cond-entropy chain are already PROVED in this shape - only the two leaves remain; their v0.2 proved counterparts are r3_fiber_growth_V_bound / r3_fiber_log_lower in Reductions/R3Fiber.lean (port the proofs, keeping constants class-only). v0.3.3 (2026-07-10 late): R3Eff is now ALSO pLow-uniform - exists-K before pLow AND sigma, conclusion (K/pLow^2)*(effEnv 2 sigma m + 1); the growth exponent in the V-bound leaf is the EXPLICIT (pLow/8)*zeta^2*m (no exists-c). Consumers with p(m)-schedules (S4 variance budgets, S6 vFam) instantiate the SAME K at every density. v0.3.5: R3Eff density factor tightened to the honest K/pLow (was K/pLow^2); both leaves restated accordingly - the v0.2 counterpart proofs deliver exponent 1 naturally."
+  },
+  {
+    "id": "E3_s4_eff",
+    "title": "Effective S4: fold-field envelope at grade 4",
+    "module": "HarperStability.Process.EffectiveS4",
+    "files": [
+      "HarperStability/Process/EffectiveS4.lean",
+      "HarperStability/Interface/Effective.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Process/Basic.lean",
+      "HarperStability/Entropy/Basic.lean"
+    ],
+    "targets": [
+      "s4_eff"
+    ],
+    "notes": "v0.3 effective pass. Interface/Effective.lean is HASH-FROZEN: never edit it; adapt the proof, not the contract. Reuse the proved v0.2 theorems and the effEnv toolkit (le_effEnv, effEnv_mono, effGeo_scale, effEnv_comp; Sublinear facts in Assembly/Effective.lean are NOT importable from workers). Follow the route in the file docstring. v0.3.1: contracts repaired (S4/S5/S7 uniform in eps with K/eps^4 resp K/eps^8; R2/R1a/Main grade 13). v0.3.3 (2026-07-10 late): R3Eff is now ALSO pLow-uniform - exists-K before pLow AND sigma, conclusion (K/pLow^2)*(effEnv 2 sigma m + 1); the growth exponent in the V-bound leaf is the EXPLICIT (pLow/8)*zeta^2*m (no exists-c). Consumers with p(m)-schedules (S4 variance budgets, S6 vFam) instantiate the SAME K at every density. || v0.3.6 (2026-07-11): S4Eff is now GRADE 5 — grade 4 was REFUTED (the S3 Fano term m*H(e/m) at e ~ effEnv 4 loses a log factor; your own iter-8 analysis, confirmed). Three sorries in Process/EffectiveS4.lean: (1) s4_fano_term_le — TRUE at grade 5; route: m*H(min(e/m,1/2)) <= 2*sqrt(e*m) (via H x <= 2*sqrt x, mirroring the v0.3.4 S6 repair), then sqrt(C*(E4+1)*(m+1)) <= sqrt(C)*(effGeo (effEnv 4 Q.sigma) m + 1) = sqrt(C)*(effEnv 5 Q.sigma m + 1). (2) s4_rate_gap_certificate — assemble S4Eff from the PROVED leaves (s4_fixedDensity_varianceBudget_eff, s4_fixedDensity_entropy_bound_eff, s4_errorBound_grade, s4_term_info_le, s4_r3_fixedDensity_blockRegular_eff) plus hFano; budget: 2log2*p*m + sS + Fano + e*log(BSize) + 2m*exp(-p*m/8) at p = sqrt((E3+1)/(m+1)) — every term is grade <= 4 except Fano at 5, so the total fits (K/eps^4)*(effEnv 5 Q.sigma m + 1). (3) s4_eff — compose the certificate. NOTE: R2/R1a/Main are now grade 14 (cascade S5 7->8, S6/S7 9->10); ignore stale grade-13 text above. || v0.3.6b (2026-07-11, after your iter-13 refutation — CONFIRMED): the grade-2 variance family was FALSE (pLow-free Pinsker term is grade 3). The decomposition was REWRITTEN with 5 new honest leaves; your proved iter-11/12/13 lemmas (s4_fixedDensity_varianceBudget_eff, s4_fixedDensity_entropy_bound_eff, s4_errorBound_grade, s4_term_info_le, s4_fano_term_le, s4_eff_error_grade4, s4_eg4_core, s4_cert_combine, s4_eff_exp_remainder, s4_rate_gap_certificate) are ALL still in the file and reusable. New sorries, each with a full route in its docstring: (1) s4_eff_variance_twoterm — two-term family (K_V/pLow)*(E2+1) + K_V*(E3+1); MIRROR the proved s6_eff_variance_grade5 in Core/EffectiveS6.lean (not importable — copy the technique, not the lemma); (2) s4_eff_error_twoterm — split s4_errorBound by sqrt-subadditivity; the grade-2/pLow part is verbatim the proved s4_eff_error_grade4 arithmetic; the new part gives (4*sqrt(K_V)/eps)*(4th-root of (E3+1)(m+1)^3); (3) s4_quarterroot_le_env5 — two geo-squares, easy; (4) s4_fano_twoterm — H_le_x_logInv + log x <= (16/e)*x^(1/16) absorption + dichotomy (m+1 <= E3+1 => trivial cap branch); (5) s4_rate_gap_certificate_v2 — glue, mirror the proved certificate with the new leaves. s4_eff is already delegated to (5). The FROZEN grade-5 contract is SAFE — do not touch Interface/Effective.lean; the two-term route fits it pointwise (hand-verified)."
+  },
+  {
+    "id": "E4_s5_eff",
+    "title": "Effective S5: pointwise flatness at grade 7",
+    "module": "HarperStability.Core.EffectiveS5",
+    "files": [
+      "HarperStability/Core/EffectiveS5.lean",
+      "HarperStability/Interface/Effective.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Core/S5.lean",
+      "HarperStability/Core/Basic.lean"
+    ],
+    "targets": [
+      "s5_eff"
+    ],
+    "notes": "v0.3 effective pass. Interface/Effective.lean is HASH-FROZEN: never edit it; adapt the proof, not the contract. Reuse the proved v0.2 theorems and the effEnv toolkit (le_effEnv, effEnv_mono, effGeo_scale, effEnv_comp; Sublinear facts in Assembly/Effective.lean are NOT importable from workers). Follow the route in the file docstring. IMPORTANT: a COMPLETE proof of s5_eff against the PRE-v0.3.1 contract exists at proof_loop_runs/20260708T201217Z-proof-section-loop/E4_s5_eff/EffectiveS5_draft_iter001_closed_old_contract.lean - port it: the only change is the uniform quantifier order (one K before all eps) and the explicit K/eps^4 factor; the internal slack constructions carry over nearly verbatim. v0.3.2 flip (2026-07-10): R3Eff is now sigma-uniform, which UNBLOCKS the R3-on-heavy-atoms step: apply R3Eff once per compact class BEFORE choosing eps, then instantiate its forall-sigma at the eps-dependent atom slack sigma + G1(eps); compose envelopes with effEnv_comp. The INTERFACE_PROBLEM from iterations 3-4 is resolved."
+  },
+  {
+    "id": "E5_s6_eff",
+    "title": "Effective S6: center entropy at grade 8",
+    "module": "HarperStability.Core.EffectiveS6",
+    "files": [
+      "HarperStability/Core/EffectiveS6.lean",
+      "HarperStability/Interface/Effective.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Core/S6.lean",
+      "HarperStability/Core/S6Window.lean",
+      "HarperStability/Core/Basic.lean"
+    ],
+    "targets": [
+      "s6_eff"
+    ],
+    "notes": "v0.3 effective pass. Interface/Effective.lean is HASH-FROZEN: never edit it; adapt the proof, not the contract. Reuse the proved v0.2 theorems and the effEnv toolkit (le_effEnv, effEnv_mono, effGeo_scale, effEnv_comp; Sublinear facts in Assembly/Effective.lean are NOT importable from workers). Follow the route in the file docstring. v0.3.1: contracts repaired (S4/S5/S7 uniform in eps with K/eps^4 resp K/eps^8; R2/R1a/Main grade 13). v0.3.3 (2026-07-10 late): R3Eff is now ALSO pLow-uniform - exists-K before pLow AND sigma, conclusion (K/pLow^2)*(effEnv 2 sigma m + 1); the growth exponent in the V-bound leaf is the EXPLICIT (pLow/8)*zeta^2*m (no exists-c). Consumers with p(m)-schedules (S4 variance budgets, S6 vFam) instantiate the SAME K at every density. v0.3.4 (2026-07-10): the Fano leaf was REFUTED at grade 8 by Aristotle (m*H(e/m) ~ e*log(m/e), unavoidable log loss) - S6Eff contract and the leaf are now GRADE 9 (lemma renamed s6_eff_entropy_term_grade9; route via H y <= 2*sqrt y makes it easy). The s6_eff assembly was re-ported by the operator and is PROVED; remaining: variance_grade5 (unblocked by pLow-uniform R3Eff) and the grade-9 Fano leaf. v0.3.5: s6_eff : S6Eff is CLOSED (wrapper over the proved s6_eff_grade9_from_current_route). The ONLY remaining sorry is s6_eff_variance_grade5, now provable: R3Eff gives blockRegular slack (K3/pLow)*(effEnv 2 sigma m + 1) uniformly; apply S1 at the fixed 1/6 band (m >= 30; window caps from blockRegular at 1/6, lower bound from fat since sigma <= effEnv 2 + 1) with eps1 := sqrt((s1+1)/(m+1)), then S2 per pLow; budget <= (K3/(2 pLow))(E2+1) + 13*sqrt((s1+1)(m+1)) + 2 <= (K_V/pLow)(E5+1); for m < 30 use the trivial bound sum uCondVar <= m/4 (rho in [0,1]) via a piecewise vFam."
+  },
+  {
+    "id": "E6_s7_eff",
+    "title": "Effective S7: heavy ball at grade 9",
+    "module": "HarperStability.Core.EffectiveS7",
+    "files": [
+      "HarperStability/Core/EffectiveS7.lean",
+      "HarperStability/Interface/Effective.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Core/S7.lean",
+      "HarperStability/Core/Basic.lean"
+    ],
+    "targets": [
+      "s7_eff"
+    ],
+    "notes": "v0.3 effective pass. Interface/Effective.lean is HASH-FROZEN: never edit it; adapt the proof, not the contract. Reuse the proved v0.2 theorems and the effEnv toolkit (le_effEnv, effEnv_mono, effGeo_scale, effEnv_comp; Sublinear facts in Assembly/Effective.lean are NOT importable from workers). Follow the route in the file docstring. v0.3.1: contracts repaired (S4/S5/S7 uniform in eps with K/eps^4 resp K/eps^8; R2/R1a/Main grade 13). v0.3.4: s7_eff re-ported by the operator against the grade-9 S6Eff (still fully proved)."
+  },
+  {
+    "id": "E7_r2_eff",
+    "title": "Effective R2: HBL at grade 10 (explicit schedules)",
+    "module": "HarperStability.Reductions.EffectiveR2",
+    "files": [
+      "HarperStability/Reductions/EffectiveR2.lean",
+      "HarperStability/Interface/Effective.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Reductions/Basic.lean",
+      "HarperStability/Reductions/R2HBL.lean"
+    ],
+    "targets": [
+      "r2_eff"
+    ],
+    "notes": "v0.3 effective pass. Interface/Effective.lean is HASH-FROZEN: never edit it; adapt the proof, not the contract. Reuse the proved v0.2 theorems and the effEnv toolkit (le_effEnv, effEnv_mono, effGeo_scale, effEnv_comp; Sublinear facts in Assembly/Effective.lean are NOT importable from workers). Follow the route in the file docstring. v0.3.1: contracts repaired (S4/S5/S7 uniform in eps with K/eps^4 resp K/eps^8; R2/R1a/Main grade 13). || v0.3.6 (2026-07-11): grade cascade — S6Eff/S7Eff are now grade 10, R2Eff/R1aEff/Main grade 14 (effDegrade _ _ 14; scale constant 2^14 = 16384). The proved schedule lemmas in Reductions/EffectiveR2.lean were ported (+1 on the whole {9..13} tail). The remaining sorry r2_eff_hbl_from_q_and_dp keeps its shape: consume S7Eff at eps(n) = ((effEnv 10 D.sigma n + 1)/((n:R)+1))^(1/16) clamped into the admissible window; mass (K/eps^8)*(E10+1) is geo-shaped grade 11 <= 14; radius excess 4*eps(n)*n is exactly grade 14. Ignore stale grade-13 text above."
+  },
+  {
+    "id": "E8_r1a_eff",
+    "title": "Effective R1a: peeling at grade 10",
+    "module": "HarperStability.Reductions.EffectiveR1",
+    "files": [
+      "HarperStability/Reductions/EffectiveR1.lean",
+      "HarperStability/Interface/Effective.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Reductions/Basic.lean"
+    ],
+    "targets": [
+      "r1a_eff"
+    ],
+    "notes": "v0.3 effective pass. Interface/Effective.lean is HASH-FROZEN: never edit it; adapt the proof, not the contract. Reuse the proved v0.2 theorems and the effEnv toolkit (le_effEnv, effEnv_mono, effGeo_scale, effEnv_comp; Sublinear facts in Assembly/Effective.lean are NOT importable from workers). Follow the route in the file docstring. v0.3.1: contracts repaired (S4/S5/S7 uniform in eps with K/eps^4 resp K/eps^8; R2/R1a/Main grade 13)."
+  },
+  {
+    "id": "E9_assembly_eff",
+    "title": "Effective assembly: main_finite_effective",
+    "module": "HarperStability.Assembly.Effective",
+    "files": [
+      "HarperStability/Assembly/Effective.lean",
+      "HarperStability/Interface/Effective.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean",
+      "HarperStability/Assembly/Basic.lean"
+    ],
+    "targets": [
+      "main_finite_effective"
+    ],
+    "notes": "v0.3 effective pass. Interface/Effective.lean is HASH-FROZEN: never edit it; adapt the proof, not the contract. Reuse the proved v0.2 theorems and the effEnv toolkit (le_effEnv, effEnv_mono, effGeo_scale, effEnv_comp; Sublinear facts in Assembly/Effective.lean are NOT importable from workers). Follow the route in the file docstring. v0.3.1: contracts repaired (S4/S5/S7 uniform in eps with K/eps^4 resp K/eps^8; R2/R1a/Main grade 13)."
+  },
+  {
+    "id": "U1_s4_uniform",
+    "title": "Uniform S4 (class-only K)",
+    "module": "HarperStability.Process.EffectiveS4U",
+    "files": [
+      "HarperStability/Process/EffectiveS4U.lean",
+      "HarperStability/Process/EffectiveS4.lean",
+      "HarperStability/Interface/EffectiveUniform.lean",
+      "HarperStability/Interface/Effective.lean",
+      "HarperStability/Interface/Definitions.lean",
+      "HarperStability/Interface/Statements.lean"
+    ],
+    "targets": [
+      "s4_effU"
+    ],
+    "notes": "v0.4 UNIFORM-K phase (the ideal formulation): move `exists K` BEFORE `forall sigma` in every effective statement, so K depends only on the class reals (+ epsCover). BOTH interface files are HASH-FROZEN: HarperStability/Interface/Effective.lean AND HarperStability/Interface/EffectiveUniform.lean — adapt proofs, never statements; if a statement is genuinely wrong, STATUS: INTERFACE_PROBLEM with a precise explanation. The v0.3 chain is CLOSED (zero sorries, clean axioms) — reuse its proofs and lemmas as templates; all its constants are already class-only in construction. Grades: S4U=5, S5U=8, S6U=10, S7U=10, R2U/R1aU/Main=14. QData/StabilityData are rebuilt as literals in the U-statements; structure eta makes `fat ⟨…⟩ ≡ fat Q` definitional. Target s4_effU: reshuffle the CLOSED s4_eff. Constant chain (all class-only): K3 := Classical.choose (hR3 qMin qMax s0 mu0 …) BEFORE sigma; K_V = 30 + K3 + 13*sqrt(6*K3+1) (s4_eff_variance_twoterm); K_err = 4*sqrt(83*K_V) (s4_eff_error_twoterm); K = 1024*K_err + 16384 (s4_rate_gap_certificate_v2). All analytic lemmas already proved in Process/EffectiveS4.lean and reusable; reassemble validQData from the hypotheses."
+  },
+  {
+    "id": "U2_s5s6_uniform",
+    "title": "Uniform S5 and S6 (class-only K)",
+    "module": "HarperStability.Core.EffectiveS6U",
+    "files": [
+      "HarperStability/Core/EffectiveS5U.lean",
+      "HarperStability/Core/EffectiveS6U.lean",
+      "HarperStability/Core/EffectiveS5.lean",
+      "HarperStability/Core/EffectiveS6.lean",
+      "HarperStability/Interface/EffectiveUniform.lean",
+      "HarperStability/Interface/Effective.lean"
+    ],
+    "targets": [
+      "s5_effU",
+      "s6_effU"
+    ],
+    "notes": "v0.4 UNIFORM-K phase (the ideal formulation): move `exists K` BEFORE `forall sigma` in every effective statement, so K depends only on the class reals (+ epsCover). BOTH interface files are HASH-FROZEN: HarperStability/Interface/Effective.lean AND HarperStability/Interface/EffectiveUniform.lean — adapt proofs, never statements; if a statement is genuinely wrong, STATUS: INTERFACE_PROBLEM with a precise explanation. The v0.3 chain is CLOSED (zero sorries, clean axioms) — reuse its proofs and lemmas as templates; all its constants are already class-only in construction. Grades: S4U=5, S5U=8, S6U=10, S7U=10, R2U/R1aU/Main=14. QData/StabilityData are rebuilt as literals in the U-statements; structure eta makes `fat ⟨…⟩ ≡ fat Q` definitional. Two targets, one per file. s5_effU: reshuffle the CLOSED s5_eff (its s5_K3 divides the hR3 constant by the fixed band 1/6 — class-only); consume hS4U before sigma. s6_effU: reshuffle the CLOSED s6_eff route (K_V = max (K3*100+100) 30 class-only; bSlack constant from hS5U before sigma; p-schedule sigma-pointwise)."
+  },
+  {
+    "id": "U3_s7r2_uniform",
+    "title": "Uniform S7 and R2 (dichotomy)",
+    "module": "HarperStability.Reductions.EffectiveR2U",
+    "files": [
+      "HarperStability/Core/EffectiveS7U.lean",
+      "HarperStability/Reductions/EffectiveR2U.lean",
+      "HarperStability/Core/EffectiveS7.lean",
+      "HarperStability/Reductions/EffectiveR2.lean",
+      "HarperStability/Interface/EffectiveUniform.lean",
+      "HarperStability/Interface/Effective.lean",
+      "proof_loop/V032_UNIFORM_K_DESIGN.md",
+      "HarperStability/Reductions/EffectiveR2U_PINNED_DIAGNOSIS.md"
+    ],
+    "targets": [
+      "s7_effU",
+      "r2_effU"
+    ],
+    "notes": "v0.4 UNIFORM-K phase (the ideal formulation): move `exists K` BEFORE `forall sigma` in every effective statement, so K depends only on the class reals (+ epsCover). BOTH interface files are HASH-FROZEN: HarperStability/Interface/Effective.lean AND HarperStability/Interface/EffectiveUniform.lean — adapt proofs, never statements; if a statement is genuinely wrong, STATUS: INTERFACE_PROBLEM with a precise explanation. The v0.3 chain is CLOSED (zero sorries, clean axioms) — reuse its proofs and lemmas as templates; all its constants are already class-only in construction. Grades: S4U=5, S5U=8, S6U=10, S7U=10, R2U/R1aU/Main=14. QData/StabilityData are rebuilt as literals in the U-statements; structure eta makes `fat ⟨…⟩ ≡ fat Q` definitional. s7_effU: pure reshuffle of the CLOSED s7_eff (K5/K6 extracted before sigma). r2_effU is THE genuinely new proof of the phase: the eps(n)-schedule clamp is removed by the GRADE-10 RATIO DICHOTOMY — if (effEnv 10 sigma n + 1)/((n:R)+1) <= eps0^16 the closed r2_eff proof replays with class-only constants; otherwise four effGeo steps give effEnv 14 sigma n >= eps0*(n+1) and the trivial singleton cover satisfies HBLFor once K >= log 2 / eps0. Do NOT use a sigma/n-threshold (costs (1/eps0)^8192). || 2026-07-11 update: s7_effU CLOSED; r2_effU merged with the dichotomy in place and ONE inner sorry (hpinned, good branch). Aristotle's iter-1 diagnosis is authoritative — read HarperStability/Reductions/EffectiveR2U_PINNED_DIAGNOSIS.md. The constant framework has been augmented accordingly (K_BV/Ceff_BV extracted before sigma, r2_effU_Cw corrected to CG+1+L+Ceff+Ceff_BV, N0 enlarged with rate/8-thresholds hN0''/hN0''' and the 2L/rate margin). Next pass: extract the focused lemma r2_effU_pinned_good per the diagnosis (signature sketch inside) and prove it by re-running the closed peeling at fixed n; do NOT route through r2_effU_pinned_core."
+  },
+  {
+    "id": "U4_assembly_uniform",
+    "title": "Uniform R1a and assembly (the ideal formulation)",
+    "module": "HarperStability.Assembly.EffectiveUniform",
+    "files": [
+      "HarperStability/Reductions/EffectiveR1U.lean",
+      "HarperStability/Assembly/EffectiveUniform.lean",
+      "HarperStability/Reductions/EffectiveR1.lean",
+      "HarperStability/Assembly/Effective.lean",
+      "HarperStability/Interface/EffectiveUniform.lean",
+      "HarperStability/Interface/Effective.lean"
+    ],
+    "targets": [
+      "r1a_effU",
+      "main_finite_effective_uniform"
+    ],
+    "notes": "v0.4 UNIFORM-K phase (the ideal formulation): move `exists K` BEFORE `forall sigma` in every effective statement, so K depends only on the class reals (+ epsCover). BOTH interface files are HASH-FROZEN: HarperStability/Interface/Effective.lean AND HarperStability/Interface/EffectiveUniform.lean — adapt proofs, never statements; if a statement is genuinely wrong, STATUS: INTERFACE_PROBLEM with a precise explanation. The v0.3 chain is CLOSED (zero sorries, clean axioms) — reuse its proofs and lemmas as templates; all its constants are already class-only in construction. Grades: S4U=5, S5U=8, S6U=10, S7U=10, R2U/R1aU/Main=14. QData/StabilityData are rebuilt as literals in the U-statements; structure eta makes `fat ⟨…⟩ ≡ fat Q` definitional. r1a_effU: reshuffle the CLOSED r1a_eff (K_final = K_hbl*C_R*16384 + K_hbl + L_eps + 1 — every factor class-only or epsCover-only). main_finite_effective_uniform: compose r3_eff and the U-contracts exactly as main_finite_effective does, constants first, sigma second; also prove the sanity corollary main_finite_effective_of_uniform via structure eta."
+  }
+]
