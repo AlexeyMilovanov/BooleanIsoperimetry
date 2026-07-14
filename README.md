@@ -19,6 +19,9 @@ their hashes are recorded in `.interface.sha256` and checked by the audit.
 
 ## Reviewing the result
 
+The accompanying paper proof is available as
+**[Robust Harper Stability at the Exponential Scale](docs/robust-harper-stability-at-the-exponential-scale.pdf)**.
+
 If you only care about *what is proved* (not the proof or the constants), read
 **[`docs/STATEMENT.md`](docs/STATEMENT.md)**. It isolates the main theorem and
 every definition it depends on (~15 short definitions), gives a plain-English
