@@ -4,12 +4,12 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 echo "== escape hatch grep =="
-if grep -RInE --include='*.lean' '\b(axiom|admit|unsafe|implemented_by|native_decide)\b|set_option maxHeartbeats 0' HarperStability *.lean 2>/dev/null; then
+if grep -RInE --include='*.lean' '\b(axiom|admit|unsafe|implemented_by|native_decide)\b|set_option maxHeartbeats 0' HarperStability AverageHarperStability *.lean 2>/dev/null; then
   echo "ERROR: hard escape hatch found"
   exit 1
 fi
 
-if grep -RInE --include='*.lean' '\bsorry\b' HarperStability *.lean 2>/dev/null; then
+if grep -RInE --include='*.lean' '\bsorry\b' HarperStability AverageHarperStability *.lean 2>/dev/null; then
   if [[ "${STRICT_NO_SORRY:-0}" == "1" ]]; then
     echo "ERROR: sorry found in strict proof-stage mode"
     exit 1
@@ -73,6 +73,20 @@ check_no_external_imports HarperStability/Reductions
 check_no_external_imports HarperStability/Process
 check_no_external_imports HarperStability/Core
 check_no_external_imports HarperStability/Assembly
+
+bad_average_interface="$(grep -RInE '^import AverageHarperStability\.(Probability|MGL|Distribution|Sets|Assembly)' AverageHarperStability/Interface* 2>/dev/null || true)"
+if [[ -n "$bad_average_interface" ]]; then
+  echo "$bad_average_interface"
+  echo "ERROR: frozen AverageHarperStability interface imports worker modules"
+  exit 1
+fi
+
+bad_average_cycle="$(grep -RInE '^import AverageHarperStability\.Assembly' AverageHarperStability/Probability AverageHarperStability/MGL AverageHarperStability/Distribution AverageHarperStability/Sets 2>/dev/null || true)"
+if [[ -n "$bad_average_cycle" ]]; then
+  echo "$bad_average_cycle"
+  echo "ERROR: AverageHarperStability worker imports assembly"
+  exit 1
+fi
 echo "Import boundaries look clean."
 
 echo "== interface hash =="
@@ -85,7 +99,7 @@ fi
 
 echo "== lake build =="
 export PATH="$HOME/.elan/bin:$PATH"
-lake build HarperStability
+lake build HarperStability AverageHarperStability
 
 echo "== theorem axiom audit =="
 axiom_output="$(lake env lean scripts/audit_axioms.lean 2>&1)"
@@ -98,6 +112,7 @@ import sys
 allowed = {"propext", "Classical.choice", "Quot.sound"}
 bad = []
 main_seen = False
+average_main_seen = False
 for line in os.environ["AXIOM_OUTPUT"].splitlines():
     m = re.search(r"depends on axioms: \[(.*)\]", line)
     if not m:
@@ -105,6 +120,9 @@ for line in os.environ["AXIOM_OUTPUT"].splitlines():
     is_main = "HarperStability.main_from_components" in line
     if is_main:
         main_seen = True
+    is_average_main = "AverageHarperStability.average_harper_set_stability" in line
+    if is_average_main:
+        average_main_seen = True
     axioms = {a.strip() for a in m.group(1).split(",") if a.strip()}
     extra = sorted(axioms - allowed)
     if extra and (is_main or os.environ.get("CHECK_ALL_AXIOMS") != "00"):
@@ -112,6 +130,8 @@ for line in os.environ["AXIOM_OUTPUT"].splitlines():
 
 if not main_seen:
     bad.append(("HarperStability.main_from_components axiom line missing", ["missing-audit-line"]))
+if not average_main_seen:
+    bad.append(("AverageHarperStability.average_harper_set_stability axiom line missing", ["missing-audit-line"]))
 
 if bad:
     print("ERROR: non-whitelisted axioms found in axiom audit")

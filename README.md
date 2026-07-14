@@ -1,9 +1,14 @@
-# HarperStabilityLean
+# Harper stability formalizations
 
 A complete Lean 4 / Mathlib formalization of a **stability version of Harper's
 vertex-isoperimetric inequality** on the Hamming cube: if a set has a
 near-minimal boundary, then all but an `ε`-fraction of it is covered by few
 Hamming balls of near-optimal radius.
+
+The repository also contains `AverageHarperStability`, a complete formalization
+of the **combinatorial/set form of average-Harper stability**: a finite set
+whose noisy entropy is nearly MGL-minimal is covered, up to vanishing relative
+mass, by exponentially few Hamming balls of asymptotically optimal radius.
 
 **Status: fully proved. Zero `sorry`.** The main theorems depend only on the
 standard axioms `[propext, Classical.choice, Quot.sound]`.
@@ -15,6 +20,21 @@ If you only care about *what is proved* (not the proof or the constants), read
 every definition it depends on (~15 short definitions), gives a plain-English
 statement, and shows the `#print axioms` output. That document is the entire
 human-trusted surface.
+
+For the average-Harper theorem, see
+**[`docs/AVERAGE_HARPER_STATEMENT.md`](docs/AVERAGE_HARPER_STATEMENT.md)**.
+
+## Average-Harper theorem
+
+The frozen headline is:
+
+```lean
+theorem AverageHarperStability.average_harper_set_stability :
+  AverageHarperStability.AverageHarperSetStabilityStatement
+```
+
+It is the minimizer/set side only. Kolmogorov complexity and the separate
+online-enumeration Step 6 are deliberately outside this theorem's scope.
 
 ## The three theorems
 
@@ -43,6 +63,11 @@ Bridges: `main_finite_via_effective` (effective ⟹ coarse) and
 - `HarperStability.Process`: S1–S4.
 - `HarperStability.Core`: S5–S7 (the heavy-ball heart).
 - `HarperStability.Assembly`: A0 and the final finite theorems.
+- `AverageHarperStability.Interface`: frozen definitions and theorem contracts.
+- `AverageHarperStability.Probability` / `.MGL` / `.Distribution`: finite
+  probability, MGL, flatness, tracking and Wyner--Ziv components.
+- `AverageHarperStability.Sets` / `.Assembly`: the entropy-to-cover bridge and
+  the final combinatorial theorem.
 
 The external Harper theorem dependency is
 [`AlexeyMilovanov/BooleanIsoperimetry`](https://github.com/AlexeyMilovanov/BooleanIsoperimetry),
@@ -53,7 +78,7 @@ pinned at `v4.28.0`.
 ```bash
 export PATH="$HOME/.elan/bin:$PATH"
 lake update
-lake build
+lake build HarperStability AverageHarperStability
 ```
 
 ## Audit
@@ -62,15 +87,18 @@ lake build
 ./scripts/audit.sh
 ```
 
-The audit checks import boundaries, the frozen interface hashes, and that no
-`sorry`, `axiom`, `admit`, `unsafe`, or heartbeat-disabling option remains.
+The audit checks both libraries' import boundaries and frozen interface hashes,
+and verifies that no `sorry`, `axiom`, `admit`, `unsafe`, or heartbeat-disabling
+option remains.
 
 ## Verify the axioms directly
 
 ```bash
 lake env lean <<'EOF'
 import HarperStability.Assembly
+import AverageHarperStability
 #print axioms HarperStability.main_finite_skeleton
 #print axioms HarperStability.main_finite_effective_uniform
+#print axioms AverageHarperStability.average_harper_set_stability
 EOF
 ```
