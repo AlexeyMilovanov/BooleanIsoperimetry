@@ -2121,6 +2121,7 @@ lemma r1_range_control_lower_param
         (S.card : ℝ) < ((ball (∅ : Cube n) (t + 1)).card : ℝ) →
         alpha - (C_V * (D.cSize * D.sigma n) + volSlack n + 1) / (n : ℝ) ≤
           (t : ℝ) / (n : ℝ) := by
+  refine (fun _ : 1 ≤ C_V => ?_) hC_V
   intro n hn t S alpha halpha_min halpha_max hsize ht_card ht_strict
   have hnpos : 0 < (n : ℝ) := by
     positivity
@@ -2140,7 +2141,7 @@ lemma r1_range_control_lower_param
   specialize hcalc n S.card 0 alpha 0 ( D.cSize * D.sigma n ) halpha_min halpha_half hslack_nonneg ; simp_all +decide [ sizeHyp ];
   have hrmin_le_succ : rmin n S.card ≤ t + 1 := by
     unfold rmin; simp +decide [ Finset.min' ] ;
-    split_ifs <;> simp_all +decide [ Finset.inf'_le ]; all_goals grind;
+    split_ifs <;> simp_all +decide; all_goals grind;
   rw [ ← add_div, le_div_iff₀ ] <;> norm_num <;> nlinarith [ abs_le.mp hcalc.2, show ( rmin n S.card : ℝ ) ≤ t + 1 by exact_mod_cast hrmin_le_succ ]
 
 /-

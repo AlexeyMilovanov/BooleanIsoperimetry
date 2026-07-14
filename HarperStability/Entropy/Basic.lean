@@ -237,7 +237,7 @@ theorem uCondH_bool_eq_uE_binEntropy {C : Type*} [DecidableEq C]
     · rw [ Finset.sum_image ] <;> simp +decide [ Finset.sum_product ];
       rw [ Finset.sum_comm, Finset.sum_congr rfl ];
       intro x hx; rw [ Finset.sum_subset ( show Finset.image f A ⊆ { true, false } from Finset.image_subset_iff.mpr fun y hy => by cases f y <;> simp +decide ) ] <;> simp +decide ;
-      constructor <;> intro h <;> simp_all +decide [ Finset.ext_iff ]; all_goals rw [ Finset.card_eq_zero.mpr ] <;> aesop;
+      constructor <;> intro h <;> simp_all +decide ; all_goals rw [ Finset.card_eq_zero.mpr ] <;> aesop;
     · intro x hx hx'; rw [ Finset.card_eq_zero.mpr ] <;> aesop;
     · simp +decide [ Finset.image_subset_iff ];
       exact fun x hx => ⟨ ⟨ x, hx, rfl ⟩, ⟨ x, hx, rfl ⟩ ⟩;
@@ -257,7 +257,7 @@ theorem uCondH_bool_eq_uE_binEntropy {C : Type*} [DecidableEq C]
         any_goals tauto;
         · rw [ Real.log_div, Real.log_div ] <;> norm_num;
           · field_simp;
-            rw [ eq_div_iff ] <;> ring;
+            rw [ eq_div_iff ] <;> ring_nf;
             exact ne_of_gt ( add_pos_of_pos_of_nonneg ( Nat.cast_pos.mpr ( Finset.card_pos.mpr ⟨ h.choose, Finset.mem_filter.mpr ⟨ h.choose_spec.1, h.choose_spec.2.1, h.choose_spec.2.2 ⟩ ⟩ ) ) ( Nat.cast_nonneg _ ) );
           · exact h';
           · exact ne_of_gt ( add_pos_of_pos_of_nonneg ( Nat.cast_pos.mpr ( Finset.card_pos.mpr ⟨ h.choose, Finset.mem_filter.mpr ⟨ h.choose_spec.1, h.choose_spec.2.1, h.choose_spec.2.2 ⟩ ⟩ ) ) ( Nat.cast_nonneg _ ) );
@@ -274,8 +274,8 @@ theorem uCondH_bool_eq_uE_binEntropy {C : Type*} [DecidableEq C]
     · grind;
     · convert rfl;
   · rw [ Finset.sum_image' ];
-    simp +decide [ div_eq_inv_mul, Finset.sum_ite, Finset.filter_filter ];
-    intro x hx; rw [ Finset.sum_congr rfl fun y hy => by rw [ show g y = g x from by aesop ] ] ; simp +decide [ mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _ ] ;
+    simp +decide [ div_eq_inv_mul, Finset.filter_filter ];
+    intro x hx; rw [ Finset.sum_congr rfl fun y hy => by rw [ show g y = g x from by aesop ] ] ; simp +decide [ mul_assoc, mul_left_comm ] ;
     exact Or.inl <| Or.inl <| by congr; ext; aesop;
 
 theorem hstep_eq_uE_binEntropy_rho (A : Finset (Cube m)) (hA : A.Nonempty)
@@ -335,7 +335,7 @@ theorem uH_proj_chain (A : Finset (Cube m)) (hA : A.Nonempty)
       · intro x hx y hy h₁ h₂; specialize h_uH_def x y; simp_all +decide [ Finset.filter_eq', Finset.filter_and ] ;
         unfold coord proj at *; simp_all +decide [ Finset.ext_iff ] ;
         grind;
-      · intro x hx; use x; simp +decide [ Finset.filter_eq', Finset.filter_and, ht_star ] ;
+      · intro x hx; use x; simp +decide [ Finset.filter_eq', Finset.filter_and ] ;
         unfold proj coord; aesop;
       · intro x hx; unfold pOn; simp +decide [ Finset.filter_eq', Finset.filter_and, * ] ;
         congr! 3;
@@ -392,9 +392,9 @@ theorem uCondH_anti (A : Finset (Cube m)) (hA : A.Nonempty) (t : Fin m)
           exact fun x hx => Finset.mem_image_of_mem _ hx;
         · exact fun x hx => ⟨ pOn_nonneg _ _ _, pOn_le_one _ _ _ ⟩;
       convert mul_le_mul_of_nonneg_left h_jensen ( Nat.cast_nonneg w.card ) using 1;
-      simp +decide [ div_eq_inv_mul, mul_assoc, mul_left_comm, Finset.mul_sum _ _ _, hw_nonempty.ne_empty ];
+      simp +decide [ div_eq_inv_mul, mul_assoc, Finset.mul_sum _ _ _, hw_nonempty.ne_empty ];
     convert h_jensen _ using 2;
-    · simp +decide [ Finset.sum_mul _ _ _, Finset.sum_div, pOn ];
+    · simp +decide [ pOn ];
       rw [ ← Finset.sum_congr rfl fun x hx => by rw [ div_mul_div_comm, mul_comm ] ];
       rw [ Finset.sum_congr rfl fun x hx => by rw [ mul_div_mul_right _ _ ( Nat.cast_ne_zero.mpr <| ne_of_gt <| Finset.card_pos.mpr <| by obtain ⟨ y, hy, rfl ⟩ := Finset.mem_image.mp hx; exact ⟨ y, by aesop ⟩ ) ] ];
       rw [ ← Finset.sum_div _ _ _, ← Nat.cast_sum ];
@@ -680,9 +680,9 @@ theorem binary_entropy_jensen_gap (A : Finset (Cube m)) (hA : A.Nonempty)
       convert concaveOn_binEntropy_add_two_sq using 1;
     convert h_jensen.le_map_sum _ _ _ <;> norm_num [ hA.ne_empty ];
     aesop;
-  unfold uE varOn; simp_all +decide [ Finset.sum_add_distrib, Finset.mul_sum _ _ _, Finset.sum_mul _ _ _ ] ; ring_nf at *;
+  unfold uE varOn; simp_all +decide ; ring_nf at *;
   unfold uE; simp_all +decide [ Finset.sum_add_distrib, Finset.mul_sum _ _ _, Finset.sum_mul _ _ _ ] ; ring_nf at *;
-  simp_all +decide [ ← Finset.mul_sum _ _ _, ← Finset.sum_mul, pow_three, sq, mul_assoc, mul_comm, mul_left_comm, hA.ne_empty ];
+  simp_all +decide [ ← Finset.sum_mul, pow_three, sq, mul_assoc, mul_comm, mul_left_comm, hA.ne_empty ];
   simp_all +decide [ ← mul_assoc, ← Finset.sum_mul _ _ _ ] ; linarith
 
 /-
@@ -713,7 +713,7 @@ theorem uCondH_gap_ge_two_uCondVar (A : Finset (Cube m)) (hA : A.Nonempty)
           rw [ mul_div, div_eq_iff ] <;> norm_cast <;> simp_all +decide [ Finset.ext_iff ];
           · rw [ mul_comm ];
             congr! 1;
-            congr 1 with x ; simp +contextual [ Finset.subset_iff ];
+            congr 1 with x ; simp +contextual ;
             intro hx hx' a; have := hd.choose_spec.2 a; simp_all +decide [ proj ] ;
             grind;
           · exact ⟨ hd.choose, hd.choose_spec.1.1, hd.choose_spec.2 ⟩;
@@ -723,16 +723,16 @@ theorem uCondH_gap_ge_two_uCondVar (A : Finset (Cube m)) (hA : A.Nonempty)
           · rw_mod_cast [ Finset.card_filter ];
             rw [ Finset.sum_image' ];
             simp +contextual [ Finset.filter_filter ];
-            intro i hi hi'; congr 1 with j ; simp +contextual [ hi' ] ;
+            intro i hi hi'; congr 1 with j ; simp +contextual ;
             intro hj hj' hj''; rw [ ← hi' ] ; ext x; simp_all +decide [ Finset.subset_iff, proj ] ;
             replace hj'' := Finset.ext_iff.mp hj'' x; aesop;
-        unfold uE pOn; simp +decide [ h_fiber_sum ] ;
+        unfold uE pOn; simp +decide ;
         convert congr_arg ( fun x : ℝ => x / ( A.filter ( fun y => proj S y = c ) |> Finset.card : ℝ ) ) h_fiber_sum using 1;
         convert rfl;
       · exact Exists.elim ( Finset.mem_image.mp hc ) fun x hx => ⟨ x, by aesop ⟩;
       · exact fun x hx => pOn_nonneg _ _ _;
       · exact fun x hx => pOn_le_one _ _ _;
-    simp_all +decide [ uE, mul_sub, sub_mul, mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _ ];
+    simp_all +decide [ uE, mul_comm ];
     rw [ sub_div', le_div_iff₀ ] at h_jensen_gap <;> nlinarith [ show ( Finset.card ( Finset.filter ( fun y => proj S y = c ) A ) : ℝ ) > 0 from Nat.cast_pos.mpr ( Finset.card_pos.mpr ⟨ hc.choose, Finset.mem_filter.mpr ⟨ hc.choose_spec.1, hc.choose_spec.2 ⟩ ⟩ ) ];
   have h_sum_jensen : (A.card : ℝ) * (uE A (fun x => H (pOn (A.filter fun y => proj S y = proj S x) (coord t) true)) - uE A (fun x => H (pOn (A.filter fun y => proj T y = proj T x) (coord t) true))) ≥ 2 * (A.card : ℝ) * uCondVar A (fun x => pOn (A.filter fun y => proj T y = proj T x) (coord t) true) (proj S) := by
     have h_sum_jensen : (A.card : ℝ) * (uE A (fun x => H (pOn (A.filter fun y => proj S y = proj S x) (coord t) true)) - uE A (fun x => H (pOn (A.filter fun y => proj T y = proj T x) (coord t) true))) = ∑ c ∈ A.image (proj S), ((A.filter fun y => proj S y = c).card * H (pOn (A.filter fun y => proj S y = c) (coord t) true) - ∑ x ∈ A.filter fun y => proj S y = c, H (pOn (A.filter fun y => proj T y = proj T x) (coord t) true)) := by
@@ -740,7 +740,7 @@ theorem uCondH_gap_ge_two_uCondVar (A : Finset (Cube m)) (hA : A.Nonempty)
       rw [ mul_div_cancel₀ _ ( Nat.cast_ne_zero.mpr hA.card_pos.ne' ), Finset.sum_image' ];
       rw [ mul_div_cancel₀ _ ( Nat.cast_ne_zero.mpr hA.card_pos.ne' ), Finset.sum_image' ];
       · exact fun _ _ => rfl;
-      · intro x hx; rw [ Finset.sum_congr rfl fun y hy => by rw [ Finset.mem_filter.mp hy |>.2 ] ] ; simp +decide [ hx ] ;
+      · intro x hx; rw [ Finset.sum_congr rfl fun y hy => by rw [ Finset.mem_filter.mp hy |>.2 ] ] ; simp +decide ;
     rw [h_sum_jensen];
     refine' le_trans _ ( Finset.sum_le_sum h_jensen );
     unfold uCondVar;
@@ -823,7 +823,7 @@ theorem uH_prod_sub_eq_sum {D E : Type*} [DecidableEq D] [DecidableEq E]
       intro b hb
       have h_split : pOn A (fun x => (f x, g x)) (b, c) = pOn A g c * pOn (A.filter fun y => g y = c) f b := by
         unfold pOn;
-        rw [ div_mul_div_comm, div_eq_div_iff ] <;> norm_cast <;> simp +decide [ Finset.filter_filter, Finset.filter_eq', Finset.filter_and ];
+        rw [ div_mul_div_comm, div_eq_div_iff ] <;> norm_cast <;> simp +decide [ Finset.filter_filter, Finset.filter_and ];
         · grind;
         · exact hA.ne_empty;
         · exact ⟨ hA.ne_empty, by obtain ⟨ x, hx, rfl ⟩ := Finset.mem_image.mp hc; exact ⟨ x, hx, rfl ⟩ ⟩;
@@ -908,13 +908,13 @@ theorem uH_bool_eq_binEntropy (A : Finset (Cube m)) (hA : A.Nonempty)
   unfold uH;
   have h_sum : ∑ b ∈ Finset.image f A, Real.negMulLog (pOn A f b) = ∑ b ∈ ({true, false} : Finset Bool), Real.negMulLog (pOn A f b) := by
     rw [ ← Finset.sum_subset h_image ];
-    intro x hx hx'; unfold pOn; simp_all +decide [ Finset.ext_iff ] ;
+    intro x hx hx'; unfold pOn; simp_all +decide ;
     rw [ Finset.card_eq_zero.mpr ] <;> aesop;
   convert h_sum using 1;
   · convert rfl;
   · have h_sum : pOn A f true + pOn A f false = 1 := by
       unfold pOn;
-      rw [ ← add_div, div_eq_iff ] <;> norm_cast <;> simp +decide [ Finset.card_filter_add_card_filter_not, hA.ne_empty ];
+      rw [ ← add_div, div_eq_iff ] <;> norm_cast <;> simp +decide [ hA.ne_empty ];
       rw [ Finset.card_filter, Finset.card_filter ] ; rw [ ← Finset.sum_add_distrib ] ; rw [ Finset.sum_congr rfl fun x hx => by aesop ] ; aesop;
     convert Real.binEntropy_eq_negMulLog_add_negMulLog_one_sub ( pOn A f true ) using 1;
     grind
@@ -942,16 +942,16 @@ theorem uH_diff_col_le {B : Type*} [DecidableEq B] (A : Finset (Cube m))
         · simp +contextual [ pOn ];
           intro a ha h; rw [ Finset.card_eq_zero.mpr ] <;> aesop;
       rw [h_prod];
-      rw [ Finset.sum_eq_single true ] <;> simp +contextual [ Finset.sum_ite ];
-      · intro x hx hx'; right; simp +decide [ hx', uH ] ;
+      rw [ Finset.sum_eq_single true ] <;> simp +contextual ;
+      · intro x hx hx'; right; simp +decide [ uH ] ;
         rw [ Finset.sum_eq_single none ] <;> simp +contextual [ pOn ];
-        · simp +decide [ hx', Finset.filter_filter ];
+        · simp +decide [ Finset.filter_filter ];
           rw [ div_self ] <;> norm_num [ Real.negMulLog_one ] ; aesop;
         · exact fun h => False.elim ( h x hx hx' );
-      · intro h; simp +decide [ h, pOn ] ;
+      · intro h; simp +decide [ pOn ] ;
         grind;
     refine' le_trans h_prod ( mul_le_mul_of_nonneg_left _ ( pOn_nonneg _ _ _ ) );
-    by_cases h : ( A.filter fun y => decide ( F y t ≠ G y t ) = true ).Nonempty <;> simp_all +decide [ uH_le_log_card_image ];
+    by_cases h : ( A.filter fun y => decide ( F y t ≠ G y t ) = true ).Nonempty <;> simp_all +decide ;
     · refine' le_trans ( uH_le_log_card_image _ h _ ) _;
       gcongr;
       refine' le_trans _ hSize;

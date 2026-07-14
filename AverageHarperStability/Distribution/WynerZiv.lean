@@ -1372,6 +1372,7 @@ lemma wzPrefixPosterior_bias_entropy_term {n : ℕ} {tau : ℝ}
         Hb (eventMass (noiseMass tau mu)
           (fun y => prefixNat t.1 y = c ∧ t ∈ y) /
             prefixMarginal (noiseMass tau mu) t.1 c) := by
+  have _ := hc
   let M := prefixMarginal (noiseMass tau mu) t.1 c
   by_cases hM : M = 0
   · simp [M, hM]
@@ -1578,6 +1579,7 @@ lemma wzPrefix_fiber_direction_bound {n : ℕ} {tau zeta : ℝ}
         (¬ (1 / 2 + zeta / 2 ≤ condProbOne mu t x) ∧
           ¬ (condProbOne mu t x ≤ 1 / 2 - zeta / 2))
         then mu x * prefixMarginal (noiseKernel tau x) t.1 c else 0) := by
+  have _ := hz1
   let w : Cube n → ℝ := wzPrefixPosteriorLaw tau mu t c
   let p : Cube n → ℝ := fun x => condProbOne mu t x
   let M : ℝ := prefixMarginal (noiseMass tau mu) t.1 c
@@ -1637,7 +1639,7 @@ lemma wzPrefix_fiber_direction_bound {n : ℕ} {tau zeta : ℝ}
     intro x _
     by_cases hd : (2 : ℝ)⁻¹ < p x
     · by_cases hhi : (2 : ℝ)⁻¹ + zeta / 2 ≤ p x
-      · simp [hd, hhi, hwlaw.1 x]
+      · simp [hd, hhi]
       · have hnlo : ¬p x ≤ (2 : ℝ)⁻¹ - zeta / 2 := by linarith
         simp [hd, hhi, hnlo]
     · rw [if_neg hd]

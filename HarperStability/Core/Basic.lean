@@ -388,7 +388,7 @@ lemma rho_choose_eq_card_ratio {m : ℕ} (S : Finset (Cube m)) (t : Fin m) (x : 
     · rw [ show ( Finset.filter ( fun y => ∀ u ≤ t, coord u y = coord u x ) S ) = Finset.filter ( fun y => ∀ u < t, coord u y = coord u x ) S \ Finset.filter ( fun y => coord t y = true ) ( Finset.filter ( fun y => ∀ u < t, coord u y = coord u x ) S ) from ?_, Finset.card_sdiff ];
       · rw [ Nat.cast_sub ];
         · simp +decide [ Finset.filter_filter, Finset.inter_comm ];
-          simp +decide [ Finset.filter_filter, Finset.filter_inter, Finset.inter_filter, Finset.filter_congr, Finset.ext_iff, proj, below ];
+          simp +decide [ Finset.filter_filter, Finset.filter_inter, Finset.inter_filter, Finset.ext_iff, proj, below ];
           simp +decide [ coord ];
         · exact Finset.card_le_card fun x hx => by aesop;
       · grind;
@@ -415,12 +415,12 @@ lemma llr_telescope {m : ℕ} (A B : Finset (Cube m)) (hB : B ⊆ A)
       · have h_telescope : ∀ (n : ℕ), n ≤ m → (∏ t ∈ Finset.univ.filter (fun t : Fin m => t.val < n), ((B.filter (fun y => ∀ u : Fin m, u < t → coord u y = coord u x)).card : ℝ)) * ((B.filter (fun y => ∀ u : Fin m, u.val < n → coord u y = coord u x)).card : ℝ) = (∏ t ∈ Finset.univ.filter (fun t : Fin m => t.val < n), ((B.filter (fun y => ∀ u : Fin m, u ≤ t → coord u y = coord u x)).card : ℝ)) * (B.card : ℝ) := by
           intro n hn;
           induction' n with n ih;
-          · simp +decide [ Finset.prod_filter ];
+          · simp +decide ;
           · rw [ show ( Finset.univ.filter fun t : Fin m => ( t : ℕ ) < n + 1 ) = Finset.univ.filter ( fun t : Fin m => ( t : ℕ ) < n ) ∪ { ⟨ n, by linarith ⟩ } from ?_, Finset.prod_union ] <;> norm_num; all_goals grind;
         have h_telescope_A : ∀ (n : ℕ), n ≤ m → (∏ t ∈ Finset.univ.filter (fun t : Fin m => t.val < n), ((A.filter (fun y => ∀ u : Fin m, u < t → coord u y = coord u x)).card : ℝ)) * ((A.filter (fun y => ∀ u : Fin m, u.val < n → coord u y = coord u x)).card : ℝ) = (∏ t ∈ Finset.univ.filter (fun t : Fin m => t.val < n), ((A.filter (fun y => ∀ u : Fin m, u ≤ t → coord u y = coord u x)).card : ℝ)) * (A.card : ℝ) := by
           intro n hn
           induction' n with n ih;
-          · simp +decide [ Finset.prod_filter ];
+          · simp +decide ;
           · rw [ show ( Finset.univ.filter fun t : Fin m => ( t : ℕ ) < n + 1 ) = Finset.univ.filter ( fun t : Fin m => ( t : ℕ ) < n ) ∪ { ⟨ n, by linarith ⟩ } from ?_, Finset.prod_union ] <;> norm_num;
             · convert congr_arg ( · * ( Finset.card ( Finset.filter ( fun y => ∀ u : Fin m, u ≤ ⟨ n, by linarith ⟩ → coord u y = coord u x ) A ) : ℝ ) ) ( ih ( Nat.le_of_succ_le hn ) ) using 1 ; ring!;
             · grind;
@@ -428,7 +428,7 @@ lemma llr_telescope {m : ℕ} (A B : Finset (Cube m)) (hB : B ⊆ A)
           constructor <;> ext y <;> simp +decide [ Finset.mem_filter, Finset.mem_singleton ];
           · exact ⟨ fun h => cube_eq_of_forall_coord_eq h.2, fun h => h.symm ▸ ⟨ hxB, fun u => rfl ⟩ ⟩;
           · exact ⟨ fun h => cube_eq_of_forall_coord_eq h.2, fun h => h.symm ▸ ⟨ hB hxB, fun u => rfl ⟩ ⟩;
-        specialize h_telescope m le_rfl; specialize h_telescope_A m le_rfl; simp_all +decide [ Finset.prod_filter ] ;
+        specialize h_telescope m le_rfl; specialize h_telescope_A m le_rfl; simp_all +decide ;
         ring;
       · exact Finset.prod_ne_zero_iff.mpr fun i _ => Nat.cast_ne_zero.mpr <| ne_of_gt <| Finset.card_pos.mpr ⟨ x, by aesop ⟩;
       · exact Finset.prod_ne_zero_iff.mpr fun i _ => Nat.cast_ne_zero.mpr <| ne_of_gt <| Finset.card_pos.mpr ⟨ x, Finset.mem_filter.mpr ⟨ hB hxB, fun u hu => rfl ⟩ ⟩;
@@ -473,14 +473,14 @@ lemma fiber_sum_kl_eq_llr {m : ℕ} (A B : Finset (Cube m)) (hB : B ⊆ A) (t : 
       rw [ Finset.card_filter, Finset.card_filter ];
       push_cast [ Finset.sum_filter ];
       rw [ Finset.sum_mul, Finset.sum_mul ] ; rw [ ← Finset.sum_add_distrib ] ; congr ; ext ; split_ifs <;> aesop;
-    simp_all +decide [ Finset.sum_ite ];
+    simp_all +decide ;
     linarith;
   convert h_contra ?_;
   convert Finset.sum_congr rfl h_fiber_sum using 1;
   · rw [ Finset.sum_image' ];
     exact fun x hx => Finset.sum_congr rfl fun y hy => by aesop;
   · rw [ Finset.sum_image' ];
-    intro x hx; refine' Finset.sum_congr rfl fun y hy => _; simp_all +decide [ rho_choose_eq_card_ratio ] ;
+    intro x hx; refine' Finset.sum_congr rfl fun y hy => _; simp_all +decide ;
     rw [ ← hy.2, rho_choose_eq_card_ratio B t y hy.1, rho_choose_eq_card_ratio A t y ( hB hy.1 ) ]
 
 lemma event_kl_chain_rule {m : ℕ} (A B : Finset (Cube m))
@@ -529,7 +529,7 @@ lemma bernoulli_pinsker (p q : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
         · refine' continuousOn_of_forall_continuousAt fun p hp => _;
           by_cases h : 1 - p = 0 <;> simp_all +decide [ ContinuousAt ];
           · have := Real.continuous_mul_log.tendsto ( 0 : ℝ );
-            convert this.comp ( show Filter.Tendsto ( fun p : ℝ => ( 1 - p ) / ( 1 - q ) ) ( nhds p ) ( nhds 0 ) from Continuous.tendsto' ( by continuity ) _ _ <| by norm_num [ show p = 1 by linarith ] ) |> Filter.Tendsto.mul_const ( 1 - q ) using 2 <;> norm_num ; ring;
+            convert this.comp ( show Filter.Tendsto ( fun p : ℝ => ( 1 - p ) / ( 1 - q ) ) ( nhds p ) ( nhds 0 ) from Continuous.tendsto' ( by continuity ) _ _ <| by norm_num [ show p = 1 by linarith ] ) |> Filter.Tendsto.mul_const ( 1 - q ) using 2 <;> norm_num ; ring_nf;
             grind;
           · exact Filter.Tendsto.mul ( tendsto_const_nhds.sub Filter.tendsto_id ) ( Filter.Tendsto.log ( Filter.Tendsto.div_const ( tendsto_const_nhds.sub Filter.tendsto_id ) _ ) ( div_ne_zero h ( by linarith ) ) );
       · exact Continuous.continuousOn ( by continuity );
@@ -537,20 +537,20 @@ lemma bernoulli_pinsker (p q : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
       exact fun x hx => DifferentiableAt.differentiableWithinAt ( by exact DifferentiableAt.sub ( DifferentiableAt.add ( DifferentiableAt.mul differentiableAt_id ( DifferentiableAt.log ( differentiableAt_id.div_const _ ) ( by exact div_ne_zero hx.1.ne' hq0.ne' ) ) ) ( DifferentiableAt.mul ( differentiableAt_id.const_sub _ ) ( DifferentiableAt.log ( by exact DifferentiableAt.div ( differentiableAt_id.const_sub _ ) ( differentiableAt_const _ ) ( by linarith ) ) ( by exact div_ne_zero ( by linarith [ hx.1, hx.2 ] ) ( by linarith ) ) ) ) ) ( DifferentiableAt.mul ( differentiableAt_const _ ) ( by norm_num ) ) ) ;
     · -- Let's calculate the first derivative of $f$.
       have h_deriv : ∀ p ∈ Set.Ioo 0 1, deriv f p = Real.log (p / q) - Real.log ((1 - p) / (1 - q)) - 4 * (p - q) := by
-        intro p hp; norm_num [ f, hp.1.ne', hp.2.ne', hq0.ne', hq1.ne', sub_ne_zero, mul_comm, div_eq_mul_inv ] ; ring;
-        norm_num [ show p ≠ 0 by linarith [ hp.1 ], show p ≠ 1 by linarith [ hp.2 ], show q ≠ 0 by linarith, show q ≠ 1 by linarith, show ( 1 - q ) ≠ 0 by linarith, show ( - ( p * ( 1 - q ) ⁻¹ ) + ( 1 - q ) ⁻¹ ) ≠ 0 by nlinarith [ hp.1, hp.2, mul_inv_cancel₀ ( by linarith : ( 1 - q ) ≠ 0 ) ] ] ; ring;
+        intro p hp; norm_num [ f, hp.1.ne', hp.2.ne', hq0.ne', hq1.ne', sub_ne_zero, mul_comm, div_eq_mul_inv ] ; ring_nf;
+        norm_num [ show p ≠ 0 by linarith [ hp.1 ], show p ≠ 1 by linarith [ hp.2 ], show q ≠ 0 by linarith, show q ≠ 1 by linarith, show ( 1 - q ) ≠ 0 by linarith, show ( - ( p * ( 1 - q ) ⁻¹ ) + ( 1 - q ) ⁻¹ ) ≠ 0 by nlinarith [ hp.1, hp.2, mul_inv_cancel₀ ( by linarith : ( 1 - q ) ≠ 0 ) ] ] ; ring_nf;
         grind;
       norm_num +zetaDelta at *;
       exact DifferentiableOn.congr ( fun x hx => DifferentiableAt.differentiableWithinAt <| by exact DifferentiableAt.sub ( DifferentiableAt.sub ( DifferentiableAt.log ( differentiableAt_id.div_const _ ) <| by exact ne_of_gt <| div_pos hx.1 hq0 ) <| DifferentiableAt.log ( DifferentiableAt.div ( differentiableAt_id.const_sub _ ) ( differentiableAt_const _ ) <| by linarith ) <| by exact ne_of_gt <| div_pos ( by linarith [ hx.2 ] ) <| by linarith ) <| DifferentiableAt.mul ( differentiableAt_const _ ) <| differentiableAt_id.sub_const _ ) fun x hx => h_deriv x hx.1 hx.2;
     · -- Let's calculate the first derivative of $f$.
       have h_deriv : ∀ x ∈ Set.Ioo 0 1, deriv f x = Real.log (x / q) - Real.log ((1 - x) / (1 - q)) - 4 * (x - q) := by
-        intro x hx; norm_num [ f, hx.1.ne', hx.2.ne', hq0.ne', hq1.ne', sub_ne_zero, mul_comm, div_eq_mul_inv ] ; ring;
-        norm_num [ show x ≠ 0 by linarith [ hx.1 ], show x ≠ 1 by linarith [ hx.2 ], show q ≠ 0 by linarith, show q ≠ 1 by linarith, show ( 1 - q ) ≠ 0 by linarith, show ( - ( x * ( 1 - q ) ⁻¹ ) + ( 1 - q ) ⁻¹ ) ≠ 0 by nlinarith [ hx.1, hx.2, mul_inv_cancel₀ ( by linarith : ( 1 - q ) ≠ 0 ) ] ] ; ring;
+        intro x hx; norm_num [ f, hx.1.ne', hx.2.ne', hq0.ne', hq1.ne', sub_ne_zero, mul_comm, div_eq_mul_inv ] ; ring_nf;
+        norm_num [ show x ≠ 0 by linarith [ hx.1 ], show x ≠ 1 by linarith [ hx.2 ], show q ≠ 0 by linarith, show q ≠ 1 by linarith, show ( 1 - q ) ≠ 0 by linarith, show ( - ( x * ( 1 - q ) ⁻¹ ) + ( 1 - q ) ⁻¹ ) ≠ 0 by nlinarith [ hx.1, hx.2, mul_inv_cancel₀ ( by linarith : ( 1 - q ) ≠ 0 ) ] ] ; ring_nf;
         grind;
       -- Let's calculate the second derivative of $f$.
       have h_deriv2 : ∀ x ∈ Set.Ioo 0 1, deriv^[2] f x = 1 / x + 1 / (1 - x) - 4 := by
-        intro x hx; refine' HasDerivAt.deriv _ ; convert HasDerivAt.congr_of_eventuallyEq _ ( Filter.eventuallyEq_of_mem ( Ioo_mem_nhds hx.1 hx.2 ) fun y hy => h_deriv y hy ) using 1 ; ring;
-        convert HasDerivAt.add ( HasDerivAt.add ( HasDerivAt.neg ( HasDerivAt.mul ( hasDerivAt_id x ) ( hasDerivAt_const _ _ ) ) ) ( hasDerivAt_const _ _ ) ) ( HasDerivAt.sub ( HasDerivAt.log ( HasDerivAt.mul ( hasDerivAt_id x ) ( hasDerivAt_const _ _ ) ) _ ) ( HasDerivAt.log ( HasDerivAt.add ( HasDerivAt.neg ( HasDerivAt.mul ( hasDerivAt_id x ) ( hasDerivAt_const _ _ ) ) ) ( hasDerivAt_const _ _ ) ) _ ) ) using 1 <;> norm_num <;> ring <;> try nlinarith [ hx.1, hx.2, mul_inv_cancel₀ ( by linarith : ( 1 - q ) ≠ 0 ) ] ;
+        intro x hx; refine' HasDerivAt.deriv _ ; convert HasDerivAt.congr_of_eventuallyEq _ ( Filter.eventuallyEq_of_mem ( Ioo_mem_nhds hx.1 hx.2 ) fun y hy => h_deriv y hy ) using 1 ; ring_nf;
+        convert HasDerivAt.add ( HasDerivAt.add ( HasDerivAt.neg ( HasDerivAt.mul ( hasDerivAt_id x ) ( hasDerivAt_const _ _ ) ) ) ( hasDerivAt_const _ _ ) ) ( HasDerivAt.sub ( HasDerivAt.log ( HasDerivAt.mul ( hasDerivAt_id x ) ( hasDerivAt_const _ _ ) ) _ ) ( HasDerivAt.log ( HasDerivAt.add ( HasDerivAt.neg ( HasDerivAt.mul ( hasDerivAt_id x ) ( hasDerivAt_const _ _ ) ) ) ( hasDerivAt_const _ _ ) ) _ ) ) using 1 <;> norm_num <;> ring_nf <;> try nlinarith [ hx.1, hx.2, mul_inv_cancel₀ ( by linarith : ( 1 - q ) ≠ 0 ) ] ;
         · grind;
         · exact ⟨ hx.1.ne', hq0.ne' ⟩
       generalize_proofs at *; (
@@ -572,8 +572,8 @@ lemma bernoulli_pinsker (p q : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
       have := le_of_tendsto_of_tendsto ‹_› tendsto_const_nhds h_subgradient; norm_num at *; linarith;
     convert h_min using 3;
     simp +zetaDelta at *;
-    ring;
-    norm_num [ show q ≠ 0 by linarith, show 1 - q ≠ 0 by linarith, show - ( q * ( 1 - q ) ⁻¹ ) + ( 1 - q ) ⁻¹ ≠ 0 by nlinarith [ mul_inv_cancel₀ ( by linarith : ( 1 - q ) ≠ 0 ) ] ] ; ring;
+    ring_nf;
+    norm_num [ show q ≠ 0 by linarith, show 1 - q ≠ 0 by linarith, show - ( q * ( 1 - q ) ⁻¹ ) + ( 1 - q ) ⁻¹ ≠ 0 by nlinarith [ mul_inv_cancel₀ ( by linarith : ( 1 - q ) ≠ 0 ) ] ] ; ring_nf;
     field_simp;
     rw [ show ( -q + 1 ) / ( 1 - q ) = 1 by rw [ div_eq_iff ] <;> linarith ] ; norm_num ; ring_nf ;
     grind
@@ -654,9 +654,9 @@ lemma pinsker_per_coord {m : ℕ} (A B : Finset (Cube m)) (hB : B ⊆ A)
   unfold uE; norm_num;
   have h_cauchy_schwarz : (∑ x ∈ B, |rho B t (proj (below Finset.univ t) x) - rho A t (proj (below Finset.univ t) x)|) ^ 2 ≤ (B.card : ℝ) * (∑ x ∈ B, (rho B t (proj (below Finset.univ t) x) - rho A t (proj (below Finset.univ t) x)) ^ 2) := by
     have h_cauchy_schwarz : ∀ (u v : Cube m → ℝ), (∑ x ∈ B, u x * v x) ^ 2 ≤ (∑ x ∈ B, u x ^ 2) * (∑ x ∈ B, v x ^ 2) := by
-      exact?;
+      exact fun u v => Finset.sum_mul_sq_le_sq_mul_sq B u v
     simpa using h_cauchy_schwarz 1 ( fun x => |rho B t ( proj ( below Finset.univ t ) x ) - rho A t ( proj ( below Finset.univ t ) x )| );
-  rw [ div_pow, div_div, div_le_div_iff₀ ] <;> try positivity;
+  rw [ div_pow, div_div, div_le_div_iff₀ ] ;
   · have h_pinsker : ∑ x ∈ B, (rho B t (proj (below Finset.univ t) x) - rho A t (proj (below Finset.univ t) x)) ^ 2 ≤ (1 / 2) * ∑ x ∈ B, (rho B t (proj (below Finset.univ t) x) * Real.log (rho B t (proj (below Finset.univ t) x) / rho A t (proj (below Finset.univ t) x)) + (1 - rho B t (proj (below Finset.univ t) x)) * Real.log ((1 - rho B t (proj (below Finset.univ t) x)) / (1 - rho A t (proj (below Finset.univ t) x)))) := by
       rw [ Finset.mul_sum _ _ _ ] ; exact Finset.sum_le_sum fun x hx => by linarith [ rho_pinsker_pointwise A B hB t x hx ] ;
     nlinarith [ show ( B.card : ℝ ) ≥ 1 by exact_mod_cast Finset.card_pos.mpr ⟨ x, hx ⟩ ];
@@ -1060,7 +1060,7 @@ lemma two_cluster_mean_threshold_error_lemma {m : ℕ} (F : Finset (Cube m))
                   · simp [hxupper, hnot_raw_inv]
                   · simp [hxupper, hnot_raw_inv]
             _ = ((F.filter fun x => (1 / 2 : ℝ) < rho x).card : ℝ) := by
-                  simp [Finset.sum_ite]
+                  simp
         unfold uE
         dsimp [rawMean] at hsum
         rw [hsum]
@@ -1148,11 +1148,11 @@ lemma two_cluster_mean_threshold_error_lemma {m : ℕ} (F : Finset (Cube m))
                     intro x hx
                     by_cases hxupper : (2⁻¹ : ℝ) < rho x
                     · have hxnotle : ¬ rho x ≤ (2⁻¹ : ℝ) := not_le.mpr hxupper
-                      simp [hxupper, hgt_raw_inv, hxnotle]
+                      simp [hxupper, hgt_raw_inv]
                     · have hxle : rho x ≤ (2⁻¹ : ℝ) := le_of_not_gt hxupper
-                      simp [hxupper, hgt_raw_inv, hxle]
+                      simp [hxupper, hgt_raw_inv]
               _ = ((F.filter fun x => ¬ (1 / 2 : ℝ) < rho x).card : ℝ) := by
-                    simp [Finset.sum_ite]
+                    simp
           unfold uE
           dsimp [rawMean] at hsum
           rw [hsum]
@@ -1229,7 +1229,7 @@ lemma hoeffding_bernoulli_mgf (p lam : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
         · -- Let's calculate the second derivative of $g(t)$.
           have hg'' : ∀ t, deriv^[2] g t = 1 / 4 - p * (1 - p) * Real.exp t / (1 - p + p * Real.exp t)^2 := by
             have hg'' : ∀ t, deriv^[2] g t = deriv (fun t => t / 4 - (-p + p * Real.exp t / (1 - p + p * Real.exp t))) t := by
-              intro t; refine' Filter.EventuallyEq.deriv_eq _ ; filter_upwards [ ] with t ; norm_num [ Real.differentiableAt_exp, mul_comm p, show ( 1 - p + p * Real.exp t ) ≠ 0 from by cases lt_or_gt_of_ne ( mt Or.inl hp ) <;> cases lt_or_gt_of_ne ( mt Or.inr hp ) <;> nlinarith [ Real.exp_pos t ] ] ; ring;
+              intro t; refine' Filter.EventuallyEq.deriv_eq _ ; filter_upwards [ ] with t ; norm_num [ Real.differentiableAt_exp, mul_comm p, show ( 1 - p + p * Real.exp t ) ≠ 0 from by cases lt_or_gt_of_ne ( mt Or.inl hp ) <;> cases lt_or_gt_of_ne ( mt Or.inr hp ) <;> nlinarith [ Real.exp_pos t ] ] ; ring_nf;
               norm_num +zetaDelta at *;
               norm_num [ Real.differentiableAt_exp, show ( 1 - p + p * Real.exp t ) ≠ 0 from by cases lt_or_gt_of_ne hp.1 <;> cases lt_or_gt_of_ne hp.2 <;> nlinarith [ Real.exp_pos t ] ] ; ring;
             intro t; rw [ hg'' ] ; norm_num [ Real.differentiableAt_exp, ne_of_gt ( show 0 < 1 - p + p * Real.exp t from by cases lt_or_gt_of_ne ( mt Or.inl hp ) <;> cases lt_or_gt_of_ne ( mt Or.inr hp ) <;> nlinarith [ Real.exp_pos t ] ) ] ; ring;
@@ -1252,9 +1252,9 @@ lemma hoeffding_bernoulli_mgf (p lam : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
   have h_exp : (1 - p + p * Real.exp lam) ≤ Real.exp (lam^2 / 8 + lam * p) := by
     rw [ ← Real.log_le_iff_le_exp ( by nlinarith [ Real.exp_pos lam, show p * Real.exp lam ≥ 0 by positivity ] ) ] ; linarith;
   convert h_contra _ using 1;
-  convert mul_le_mul_of_nonneg_right h_exp ( Real.exp_nonneg ( lam * -p ) ) using 1 <;> ring;
+  convert mul_le_mul_of_nonneg_right h_exp ( Real.exp_nonneg ( lam * -p ) ) using 1 <;> ring_nf;
   · rw [ Real.exp_add ] ; ring;
-  · rw [ ← Real.exp_add ] ; ring
+  · rw [ ← Real.exp_add ] ; ring_nf
 
 /-
 Fiber MGF bound: within any fiber `F`, the mean centered exponential
@@ -1268,10 +1268,10 @@ lemma fiber_mgf_le {m : ℕ} (F : Finset (Cube m)) (t : Fin m) (lam : ℝ) :
   · have h_split : (∑ y ∈ F, Real.exp (lam * ((if coord t y = decide (1 / 2 < pOn F (coord t) true) then 0 else 1) - fold (pOn F (coord t) true)))) =
       (∑ y ∈ F.filter (fun y => coord t y ≠ decide (1 / 2 < pOn F (coord t) true)), Real.exp (lam * (1 - fold (pOn F (coord t) true)))) +
       (∑ y ∈ F.filter (fun y => coord t y = decide (1 / 2 < pOn F (coord t) true)), Real.exp (lam * (-fold (pOn F (coord t) true)))) := by
-        rw [ Finset.sum_filter, Finset.sum_filter ] ; rw [ ← Finset.sum_add_distrib ] ; congr ; ext ; split_ifs <;> ring;
+        rw [ Finset.sum_filter, Finset.sum_filter ] ; rw [ ← Finset.sum_add_distrib ] ; congr ; ext ; split_ifs <;> ring_nf;
         contradiction;
-    have := fiber_error_card_eq F t; simp_all +decide [ Finset.sum_filter ] ;
-    rw [ show ( Finset.filter ( fun y => coord t y = decide ( 2⁻¹ < pOn F ( coord t ) true ) ) F ).card = F.card - ( Finset.filter ( fun y => ¬coord t y = decide ( 2⁻¹ < pOn F ( coord t ) true ) ) F ).card from eq_tsub_of_add_eq <| by rw [ Finset.card_filter_add_card_filter_not ] ] ; rw [ Nat.cast_sub <| Finset.card_filter_le _ _ ] ; norm_num ; ring;
+    have := fiber_error_card_eq F t; simp_all +decide ;
+    rw [ show ( Finset.filter ( fun y => coord t y = decide ( 2⁻¹ < pOn F ( coord t ) true ) ) F ).card = F.card - ( Finset.filter ( fun y => ¬coord t y = decide ( 2⁻¹ < pOn F ( coord t ) true ) ) F ).card from eq_tsub_of_add_eq <| by rw [ Finset.card_filter_add_card_filter_not ] ] ; rw [ Nat.cast_sub <| Finset.card_filter_le _ _ ] ; norm_num ; ring_nf;
     grind;
   · exact le_min ( pOn_nonneg _ _ _ ) ( sub_nonneg.2 ( pOn_le_one _ _ _ ) );
   · exact le_trans ( fold_le_half _ ) ( by norm_num )
@@ -1298,7 +1298,7 @@ lemma delta_eq_of_prefix {m : ℕ} (A : Finset (Cube m)) (t : Fin m) (n : ℕ) (
     rw [h_eq_proj]
   have h_eq_predictableCenter : coord t (predictableCenter A x) = coord t (predictableCenter A y) := by
     simp_all +decide [ predictableCenter, coord ]
-  simp [h_eq, h_eq_proj, h_eq_rho, h_eq_predictableCenter]
+  simp [h_eq, h_eq_proj, h_eq_predictableCenter]
 
 /-
 MGF telescoping over the revelation order: the total exponential moment of
@@ -1333,7 +1333,7 @@ lemma mgf_telescope {m : ℕ} (A : Finset (Cube m)) (lam : ℝ) :
            fold (rho A ⟨n, by linarith⟩ (proj (below Finset.univ ⟨n, by linarith⟩) x)))) := by
              rw [ Finset.sum_image' ];
              intro x hx; refine' Finset.sum_congr rfl fun y hy => _; simp +decide [ Finset.sum_ite ] ;
-             rw [ ← Real.exp_add ] ; congr 1 ; ring;
+             rw [ ← Real.exp_add ] ; congr 1 ; ring_nf;
              rw [ show ( Finset.filter ( fun x : Fin m => ( x : ℕ ) ≤ n ) Finset.univ ) = Finset.filter ( fun x : Fin m => ( x : ℕ ) < n ) Finset.univ ∪ { ⟨ n, by linarith ⟩ } from ?_, Finset.sum_union ] <;> norm_num;
              · split_ifs <;> simp_all +decide [ Finset.filter_insert ] <;> ring;
              · grind +splitImp;
@@ -1401,7 +1401,7 @@ lemma mgf_telescope {m : ℕ} (A : Finset (Cube m)) (lam : ℝ) :
                  rw [ ← Finset.mul_sum _ _ _ ];
                  rw [ Finset.sum_image' ];
                  exact fun _ _ => rfl;
-        convert h_ind_step_simplified.trans ( mul_le_mul_of_nonneg_left ( ih ( Nat.le_of_succ_le hn ) ) ( Real.exp_nonneg _ ) ) using 1 ; push_cast ; ring;
+        convert h_ind_step_simplified.trans ( mul_le_mul_of_nonneg_left ( ih ( Nat.le_of_succ_le hn ) ) ( Real.exp_nonneg _ ) ) using 1 ; push_cast ; ring_nf;
         rw [ Real.exp_add ] ; ring;
   simpa using h_ind m le_rfl
 
@@ -1420,7 +1420,7 @@ lemma azuma_center_distance {m : ℕ} (A : Finset (Cube m)) (hA : A.Nonempty) (e
     rw [ div_le_div_iff₀ ] <;> try positivity;
     convert h_markov.trans _ using 1;
     · norm_num [ mul_assoc ];
-    · convert mgf_telescope A lam using 1 ; ring;
+    · convert mgf_telescope A lam using 1 ; ring_nf;
       · simp +decide [ ← mul_sub, hDist_eq_sum_indicator ];
       · ring;
   convert h_div.trans _ using 1;
@@ -1489,8 +1489,7 @@ lemma blockRegularFamily_from_R3 (Q : QData) (_hR3 : R3Statement)
     dsimp [sFam]
     rw [dif_pos h]
     exact (Classical.choose_spec (_hR3 Q pLow hQ hpLow hpLow_le)).1
-  · intro m A q hA hfat hpinned
-    intro pLow hpLow hpLow_le
+  · intro m A q hA hfat hpinned pLow hpLow hpLow_le
     have h : 0 < pLow ∧ pLow ≤ 1 / 2 := ⟨hpLow, hpLow_le⟩
     dsimp [sFam]
     rw [dif_pos h]
@@ -1607,7 +1606,7 @@ lemma core_uCondVar_le_one {m : ℕ} {B : Type*} [DecidableEq B]
   refine' le_trans ( Finset.sum_le_sum fun b hb => mul_le_mul_of_nonneg_left ( core_varOn_le_one _ _ ( fun x => hf0 x ) ( fun x => hf1 x ) ) ( _ ) ) _;
   · exact div_nonneg ( Nat.cast_nonneg _ ) ( Nat.cast_nonneg _ );
   · by_cases hA : A.Nonempty <;> simp_all +decide [ pOn ];
-    rw [ ← Finset.sum_div _ _ _, div_le_iff₀ ] <;> norm_cast <;> simp_all +decide [ Finset.sum_filter ];
+    rw [ ← Finset.sum_div _ _ _, div_le_iff₀ ] <;> norm_cast <;> simp_all +decide ;
     grind +suggestions
 
 /-

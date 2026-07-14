@@ -242,6 +242,7 @@ lemma r3_fiber_growth_V_bound_eff (hBV : BallVolumeTwoSidedEff)
           (pLow / 8) * ζ ^ 2 * (m : ℝ) -
           (K / pLow) * (effEnv 1 sigma m + 1)) * (k : ℝ) ≤
         (V Icard k θ : ℝ) := by
+  refine (fun _ : InteriorVolumeCalculusEff => ?_) hIVC
   rcases hBV with ⟨K_BV, hK_BV, h_bounds⟩
   let dummy_sigma : ℕ → ℝ := fun n => Real.log ((n : ℝ) + 1)
   have hsub_dummy : Sublinear dummy_sigma := by
@@ -612,7 +613,7 @@ lemma r3_fiber_growth_V_bound_eff (hBV : BallVolumeTwoSidedEff)
       have hshift : H ((t + 1 : ℝ) / (Icard : ℝ)) - H ((t : ℝ) / (Icard : ℝ)) ≤ H (1 / (Icard : ℝ)) := by
         have hle1 : (t : ℝ) / (Icard : ℝ) + 1 / (Icard : ℝ) ≤ 1 := by
           rw [← add_div, div_le_one hIpos]
-          push_cast
+
           exact_mod_cast (le_trans hsafe2 (by omega))
         have := r3_H_shift_le (a := (t : ℝ) / (Icard : ℝ)) (δ := 1 / (Icard : ℝ)) (by positivity) (by positivity) hle1
         rwa [← add_div] at this
@@ -731,8 +732,8 @@ lemma r3_sparse_mass_eff (hBV : BallVolumeTwoSidedEff)
     rw [ Finset.mul_sum _ _ _ ];
     refine Finset.sum_le_sum fun z hz => ?_;
     convert hK.2 pLow hpLow hpLow' sigma hsigma hlog m q hfat.2.2.1 hfat.2.2.2.1 I.card hIlow hIhigh ζ hζpos hζle hζscale _ _ using 1;
-    · unfold pOn; ring;
-      simp +decide [ mul_assoc, mul_comm, mul_left_comm, hA.ne_empty ] ; ring;
+    · unfold pOn; ring_nf;
+      simp +decide [ mul_assoc, mul_comm, mul_left_comm, hA.ne_empty ] ; ring_nf;
       convert rfl;
     · exact Finset.mem_filter.mp hz |>.2;
   -- Apply the lemma `r3_eff_nH_inv_le_log_add_one` to obtain the inequality for the cardinality of A.
@@ -797,13 +798,13 @@ private lemma r3_eff_zeta_m_bound (pLow K0 E E2 M : ℝ)
     (hsqm : Real.sqrt (Real.sqrt M * M) ≤ E2) :
     Real.sqrt (16 * ((K0 / pLow) * (E + 1) + Real.sqrt M) / (pLow * M)) * M ≤
       (4 * (Real.sqrt K0 + 1) / pLow) * E2 := by
-  by_cases hM : M = 0 <;> simp_all +decide [ mul_assoc, mul_comm, mul_left_comm ];
+  by_cases hM : M = 0 <;> simp_all +decide [ mul_assoc, mul_comm ];
   · positivity;
   · -- Simplify the left-hand side of the inequality.
     suffices h_simp : Real.sqrt ((K0 / pLow * (E + 1) + Real.sqrt M) * M / pLow) ≤ (Real.sqrt K0 + 1) / pLow * E2 by
-      convert mul_le_mul_of_nonneg_left h_simp ( show 0 ≤ 4 by norm_num ) using 1 <;> ring ; norm_num [ hpLow.le, hpLow.ne', hM ] ; ring;
+      convert mul_le_mul_of_nonneg_left h_simp ( show 0 ≤ 4 by norm_num ) using 1 <;> ring_nf ; norm_num [ hpLow.le, hpLow.ne', hM ] ; ring_nf;
       field_simp;
-      rw [ show M * ( K0 * ( 1 + E ) + pLow * Real.sqrt M ) / pLow ^ 2 = ( ( K0 * ( 1 + E ) + pLow * Real.sqrt M ) / pLow ) * ( M / pLow ) by ring, Real.sqrt_mul ( by positivity ), Real.sqrt_div ( by positivity ) ] ; ring ; norm_num [ hpLow.le, hpLow.ne' ] ; ring;
+      rw [ show M * ( K0 * ( 1 + E ) + pLow * Real.sqrt M ) / pLow ^ 2 = ( ( K0 * ( 1 + E ) + pLow * Real.sqrt M ) / pLow ) * ( M / pLow ) by ring_nf, Real.sqrt_mul ( by positivity ), Real.sqrt_div ( by positivity ) ] ; ring_nf ; norm_num [ hpLow.le, hpLow.ne' ] ; ring_nf;
       rw [ Real.sq_sqrt ( by positivity ) ];
     -- Apply the subadditivity of the square root function.
     have h_subadd : Real.sqrt ((K0 / pLow * (E + 1) + Real.sqrt M) * M / pLow) ≤ Real.sqrt ((K0 / pLow) * (E + 1) * M / pLow) + Real.sqrt (Real.sqrt M * M / pLow) := by
@@ -816,7 +817,7 @@ private lemma r3_eff_zeta_m_bound (pLow K0 E E2 M : ℝ)
       exact ⟨ by linarith, by nlinarith [ show 0 ≤ Real.sqrt M * Real.sqrt ( Real.sqrt M ) by positivity, show 0 ≤ Real.sqrt M * M by positivity, Real.mul_self_sqrt ( show 0 ≤ M by positivity ), Real.mul_self_sqrt ( show 0 ≤ Real.sqrt M by positivity ), Real.sqrt_nonneg M, Real.sqrt_nonneg ( Real.sqrt M ), mul_le_mul_of_nonneg_left hpLow1 ( Real.sqrt_nonneg M ), mul_le_mul_of_nonneg_left hpLow1 ( Real.sqrt_nonneg ( Real.sqrt M ) ) ] ⟩;
     -- Apply the given bounds to the simplified expression further for the first term.
     have h_bound1 : Real.sqrt (K0 / pLow * (E + 1) * M / pLow) ≤ Real.sqrt K0 / pLow * E2 := by
-      convert mul_le_mul_of_nonneg_left hsqE ( show 0 ≤ Real.sqrt K0 / pLow by positivity ) using 1 ; ring;
+      convert mul_le_mul_of_nonneg_left hsqE ( show 0 ≤ Real.sqrt K0 / pLow by positivity ) using 1 ; ring_nf;
       rw [ show K0 * pLow⁻¹ ^ 2 * E * M + K0 * pLow⁻¹ ^ 2 * M = ( pLow⁻¹ * Real.sqrt K0 * Real.sqrt M * Real.sqrt ( 1 + E ) ) ^ 2 by rw [ mul_pow, mul_pow, mul_pow, Real.sq_sqrt <| by positivity, Real.sq_sqrt <| by positivity, Real.sq_sqrt <| by positivity ] ; ring ] ; rw [ Real.sqrt_sq <| by positivity ];
     grind
 
@@ -832,6 +833,7 @@ private lemma r3_eff_trivial_slack (pLow K K0 E E2 M c2min : ℝ)
     (hKb : 32 * Real.log 2 / c2min ^ 2 ≤ K)
     (hKc : Real.log 2 * Real.sqrt (32 * K0) / c2min ≤ K) :
     Real.log 2 * M ≤ (K / pLow) * (E2 + 1) := by
+  refine (fun _ : 0 ≤ E => ?_) hE
   rw [ div_le_iff₀ ( by positivity ) ] at *;
   rw [ div_mul_eq_mul_div, le_div_iff₀ ] at * <;> try positivity;
   by_cases hcase : pLow * M * c2min ^ 2 / 32 ≤ Real.sqrt M;
@@ -1174,6 +1176,7 @@ private lemma r3_eff_from_cond_entropy (Q : QData) (pLow K : ℝ) (hK : 1 ≤ K)
     ∀ m (A : Finset (Cube m)) (q : ℝ),
       A.Nonempty → fat Q m A q → pinned Q m A q →
       blockRegular m A q pLow ((K + 1) * (effEnv 2 Q.sigma m + 1)) := by
+  refine (fun _ : 1 ≤ K => ?_) hK
   intro m A q hA hfat hpinned
   refine ⟨hlow, hhigh, ?_⟩
   intro I hI_low hI_high

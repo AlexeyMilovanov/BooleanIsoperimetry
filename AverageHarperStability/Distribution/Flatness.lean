@@ -58,31 +58,31 @@ lemma kfun_hasDerivAt {x : ℝ} (hx0 : 0 < x) (hx1 : x < 1 / 2) :
   have hxdenpos : 0 < 1 - 2 * x := by linarith
   have hxden : 1 - 2 * x ≠ 0 := ne_of_gt hxdenpos
   have hone : HasDerivAt (fun y : ℝ => 1 - y) (-1) x := by
-    convert (hasDerivAt_const x 1).sub (hasDerivAt_id x) using 1 <;> norm_num
+    (convert (hasDerivAt_const x 1).sub (hasDerivAt_id x) using 1; norm_num)
   have hquot : HasDerivAt (fun y : ℝ => (1 - y) / y) (-1 / x ^ 2) x := by
     have hquot0 : HasDerivAt (fun y : ℝ => (1 - y) / y)
         ((-1 * x - (1 - x) * 1) / x ^ 2) x := by
       simpa only [id_eq] using hone.div (hasDerivAt_id x) hx0'
-    convert hquot0 using 1 <;> field_simp <;> ring
+    (convert hquot0 using 1; field_simp; ring)
   have hlog : HasDerivAt (fun y : ℝ => log ((1 - y) / y))
       (-1 / (x * (1 - x))) x := by
-    convert hquot.log (div_ne_zero hx1' hx0') using 1 <;> field_simp <;> ring
+    (convert hquot.log (div_ne_zero hx1' hx0') using 1; field_simp)
   have hrat : HasDerivAt (fun y : ℝ => (y * (1 - y)) / (1 - 2 * y))
       ((1 - 2 * x + 2 * x ^ 2) / (1 - 2 * x) ^ 2) x := by
     have hnum' : HasDerivAt (fun y : ℝ => y * (1 - y)) (1 - 2 * x) x := by
       have hnum0 : HasDerivAt (fun y : ℝ => y * (1 - y))
           (1 * (1 - x) + x * (-1)) x := by
         simpa only [id_eq] using (hasDerivAt_id x).mul hone
-      convert hnum0 using 1 <;> ring
+      (convert hnum0 using 1; ring)
     have hden' : HasDerivAt (fun y : ℝ => 1 - 2 * y) (-2) x := by
-      convert (hasDerivAt_const x 1).sub ((hasDerivAt_const x 2).mul (hasDerivAt_id x))
-        using 1 <;> norm_num
-    convert hnum'.div hden' hxden using 1 <;> field_simp <;> ring
+      (convert (hasDerivAt_const x 1).sub ((hasDerivAt_const x 2).mul (hasDerivAt_id x))
+        using 1; norm_num)
+    (convert hnum'.div hden' hxden using 1; field_simp; ring)
   have hk : HasDerivAt kfun
       (((1 - 2 * x + 2 * x ^ 2) / (1 - 2 * x) ^ 2) * log ((1 - x) / x) -
         1 / (1 - 2 * x)) x := by
     unfold kfun
-    convert hrat.mul hlog using 1 <;> field_simp <;> ring
+    (convert hrat.mul hlog using 1; field_simp; ring)
   exact hk
 
 /-- **Key new quantitative bound**: the derivative of `kfun` is at least `1 - 2x`.
@@ -181,25 +181,25 @@ lemma slopeFun_hasDerivAt {tau : ℝ} (ht0 : 0 < tau) (ht1 : tau < 1 / 2)
     have h1 := (Real.hasDerivAt_log (by linarith : 1 - x ≠ 0)).comp x
       ((hasDerivAt_const x 1).sub (hasDerivAt_id x))
     have h2 := Real.hasDerivAt_log (ne_of_gt hx0)
-    convert h1.sub h2 using 1 <;>
-      field_simp [ne_of_gt hx0, ne_of_gt (sub_pos.mpr hx1)] <;> ring
+    (convert h1.sub h2 using 1;
+      field_simp [ne_of_gt hx0, ne_of_gt (sub_pos.mpr hx1)]; ring)
   have hLpos : 0 < L p := by
     dsimp [L]; rw [sub_pos]; exact Real.log_lt_log hp.1 (by linarith)
   have hQder : HasDerivAt Q a p := by
     dsimp [Q]
-    convert (hasDerivAt_const p tau).add ((hasDerivAt_const p a).mul (hasDerivAt_id p))
-      using 1 <;> simp only [id_eq] <;> ring
+    (convert (hasDerivAt_const p tau).add ((hasDerivAt_const p a).mul (hasDerivAt_id p))
+      using 1; simp only [id_eq]; ring)
   have hLQ : HasDerivAt (fun x => L (Q x)) (-a / (Q p * (1 - Q p))) p := by
-    convert (hLder (Q p) (hp.1.trans hqp.1) hq1).comp p hQder using 1 <;>
-      field_simp <;> ring
+    (convert (hLder (Q p) (hp.1.trans hqp.1) hq1).comp p hQder using 1;
+      field_simp)
   have hd : HasDerivAt (slopeFun tau)
       (a * ((-a / (Q p * (1 - Q p))) * L p - L (Q p) * (-1 / (p * (1 - p)))) /
         (L p) ^ 2) p := by
     show HasDerivAt (fun p => a * L (Q p) / L p) _ p
     have hn : HasDerivAt (fun x => a * L (Q x))
         (a * (-a / (Q p * (1 - Q p)))) p := by
-      convert (hasDerivAt_const p a).mul hLQ using 1 <;> ring
-    convert hn.div (hLder p hp.1 hp1) (ne_of_gt hLpos) using 1 <;> ring
+      (convert (hasDerivAt_const p a).mul hLQ using 1; ring)
+    (convert hn.div (hLder p hp.1 hp1) (ne_of_gt hLpos) using 1; ring)
   exact hd
 
 /-- Elementary logarithm inequality used in the quantitative slope bound:
@@ -749,7 +749,7 @@ lemma condEntropy_sq_deviation_bound
     rw [Finset.mul_sum]
     apply Finset.sum_le_sum
     intro x _
-    convert mul_le_mul_of_nonneg_left (hpoint t x) (hmu.1 x) using 1 <;> ring
+    (convert mul_le_mul_of_nonneg_left (hpoint t x) (hmu.1 x) using 1; ring)
   have hlinear :
       (∑ t, ∑ x, mu x *
           (mglCurve tau (condEntropy mu t x) - mglCurve tau u -

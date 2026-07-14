@@ -241,7 +241,7 @@ lemma r1a_nearOptimal_core
         exact_mod_cast Finset.card_le_card ( HarperStability.neighborhood_mono_set hsub );
       refine le_trans hmono ?_;
       refine le_trans ?_ ( mul_le_mul_of_nonneg_right ( Real.exp_le_exp.mpr <| show sigma n + 2 * C_V * ( cSize * sigma n - Real.log epsCover ) + 2 * effLog K_vol n + C_dich * ( sigma n + 1 ) ≥ sigma n + 2 * C_V * ( cSize * sigma n - Real.log epsCover ) + 2 * effLog K_vol n by nlinarith [ show 0 ≤ sigma n from hsigma.1 n ] ) <| Nat.cast_nonneg _ );
-      convert le_trans hmem.2.2.2.2.2.2.1 ( mul_le_mul_of_nonneg_left hVcompare <| Real.exp_nonneg _ ) using 1 ; ring;
+      convert le_trans hmem.2.2.2.2.2.2.1 ( mul_le_mul_of_nonneg_left hVcompare <| Real.exp_nonneg _ ) using 1 ; ring_nf;
       rw [ show sigma n + ( sigma n * C_V * cSize * 2 - C_V * Real.log epsCover * 2 ) + effLog K_vol n * 2 = sigma n + ( sigma n * C_V * cSize * 2 - C_V * Real.log epsCover * 2 + effLog K_vol n * 2 ) by ring ] ; rw [ Real.exp_add ] ; ring;
     · refine' le_trans _ ( mul_le_mul_of_nonneg_left ( show ( V n R.card r : ℝ ) ≥ 1 from _ ) ( by positivity ) );
       · refine' le_trans _ ( mul_le_mul_of_nonneg_right ( Real.exp_le_exp.mpr h ) zero_le_one ) |> le_trans <| _;
@@ -489,8 +489,7 @@ theorem r1a_effU (hBV : BallVolumeTwoSidedEff) (hVPlus : VPlusStatement)
   · use 1
     constructor
     · linarith
-    · intro sigma hsublin hlog
-      intro n r S alpha beta hmem
+    · intro sigma hsublin hlog n r S alpha beta hmem
       have h_eps : 1 ≤ epsCover := by linarith
       have h_empty :=
         stabilityCoverConclusion_empty_of_one_le (n := n) (S := S)

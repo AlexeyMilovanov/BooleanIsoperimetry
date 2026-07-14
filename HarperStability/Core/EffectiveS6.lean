@@ -513,7 +513,7 @@ lemma s6_eff_error_grade9 (Q : QData) (hQ : validQData Q)
         refine le_trans ( mul_le_mul_of_nonneg_left hT3 <| div_nonneg ( Nat.cast_nonneg _ ) hp_bounds.1.le ) ?_ ; ring_nf ; norm_num [ hp_bounds.1.ne' ];
         by_cases hm : m = 0 <;> simp_all +decide [ mul_assoc, mul_comm, mul_left_comm ];
         · positivity;
-        · exact le_of_eq ( by rw [ ← div_eq_mul_inv ] ; rw [ inv_eq_one_div, div_eq_div_iff ] <;> ring <;> nlinarith [ pow_pos hp_bounds.1 3 ] );
+        · exact le_of_eq ( by rw [ ← div_eq_mul_inv ] ; rw [ inv_eq_one_div, div_eq_div_iff ] <;> ring_nf <;> nlinarith [ pow_pos hp_bounds.1 3 ] );
       have hT3 : 4 / p^2 ≤ 4 * ((m + 1) / (E7 + 1) + 4) := by
         have := s6_eff_invsq_le Q hQ m; ring_nf at *; linarith;
       generalize_proofs at *;

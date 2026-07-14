@@ -20,6 +20,8 @@ lemma label_entropy_bound
     (herr0 : 0 < err) (hsmall : err < Real.log 2)
     (herr_val : err_val tau zeta delta ≤ err) :
     entropy (mapMass mu (adaptedCenter mu)) ≤ err * (n : ℝ) := by
+  have _ := herr0
+  have _ := hsmall
   have h_sandwich :=
     wyner_ziv_sandwich ht0 ht1 hz0 hz1 hn hmu hd0 hzeta1 hzeta2 h_ent
   set H_D := entropy (mapMass mu (adaptedCenter mu))
@@ -100,6 +102,7 @@ lemma offFlatBudget_mean_bound
     (herr0 : 0 < err) (hsmall : err < Real.log 2)
     (herr_val : err_val tau zeta delta ≤ err) :
     ∑ x, mu x * offFlatBudget err mu x ≤ (err ^ 2 / 4) * (n : ℝ) := by
+  have _ := hsmall
   have h_core := flatness_off_flat_budget_bound ht0 ht1 hz0 hz1 hn hmu hd0 hzeta1 hzeta2 h_ent
   have h_le : ∑ x, mu x * offFlatBudget err mu x ≤ ∑ x, mu x * offFlatBudget (err_val tau zeta delta) mu x := by
     apply Finset.sum_le_sum
@@ -329,9 +332,9 @@ lemma muCounter_entropyRate :
       (Hb (1 / 8) + Hb (3 / 8)) / 2 := by
   unfold entropyRate Hb;
   unfold entropy muCounter;
-  rw [ show ( Finset.univ : Finset ( Finset ( Fin 2 ) ) ) = { { 0, 1 }, { 0 }, { 1 }, { } } by decide ] ; simp +decide [ Finset.sum ] ; ring;
-  norm_num [ Real.binEntropy, Real.negMulLog ] ; ring;
-  norm_num [ Real.log_div ] ; ring;
+  rw [ show ( Finset.univ : Finset ( Finset ( Fin 2 ) ) ) = { { 0, 1 }, { 0 }, { 1 }, { } } by decide ] ; simp +decide [ Finset.sum ] ; ring_nf;
+  norm_num [ Real.binEntropy, Real.negMulLog ] ; ring_nf;
+  norm_num [ Real.log_div ] ; ring_nf;
   rw [ show ( 64 : ℝ ) = 2 ^ 6 by norm_num, Real.log_pow ] ; rw [ show ( 8 : ℝ ) = 2 ^ 3 by norm_num, Real.log_pow ] ; rw [ show ( 21 : ℝ ) = 3 * 7 by norm_num, Real.log_mul ] <;> norm_num ; rw [ show ( 35 : ℝ ) = 5 * 7 by norm_num, Real.log_mul ] <;> norm_num ; ring;
 
 lemma muCounter_adapted_floor :
@@ -348,7 +351,7 @@ lemma muCounter_adapted_floor :
     split_ifs <;> simp_all +decide [ prefixAt ];
     · exact hD { 0 } ( by fin_cases x <;> trivial );
     · exact hD ∅ ( by ext i; fin_cases i <;> aesop );
-  simp +decide [ Finset.sum_ite, mismatchAt ];
+  simp +decide [ mismatchAt ];
   rw [ show ( Finset.univ : Finset ( Cube 2 ) ) = { ∅, { 0 }, { 1 }, { 0, 1 } } by decide ] ; simp +decide [ Finset.sum ] ; ring_nf ; norm_num [ muCounter ] ;
   grind
 

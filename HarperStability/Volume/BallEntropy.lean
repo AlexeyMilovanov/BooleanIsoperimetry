@@ -66,8 +66,8 @@ lemma binTerm_le_mode {n t : ℕ} (hn : 1 ≤ n) (ht : t ≤ n) (i : ℕ) :
         norm_cast;
         have := Nat.choose_succ_right_eq n i;
         nlinarith [ Nat.sub_add_cancel ( by linarith : i ≤ n ), Nat.sub_add_cancel ( by linarith : t ≤ n ) ];
-      convert mul_le_mul_of_nonneg_right h_r_increasing_step ( show 0 ≤ ( t / n : ℝ ) ^ i * ( 1 - t / n ) ^ ( n - ( i + 1 ) ) by exact mul_nonneg ( pow_nonneg ( by positivity ) _ ) ( pow_nonneg ( sub_nonneg.2 <| div_le_one_of_le₀ ( mod_cast by linarith ) <| by positivity ) _ ) ) using 1 ; ring;
-      · unfold binTerm; ring;
+      convert mul_le_mul_of_nonneg_right h_r_increasing_step ( show 0 ≤ ( t / n : ℝ ) ^ i * ( 1 - t / n ) ^ ( n - ( i + 1 ) ) by exact mul_nonneg ( pow_nonneg ( by positivity ) _ ) ( pow_nonneg ( sub_nonneg.2 <| div_le_one_of_le₀ ( mod_cast by linarith ) <| by positivity ) _ ) ) using 1 ; ring_nf;
+      · unfold binTerm; ring_nf;
         rw [ show n - i = n - ( 1 + i ) + 1 by omega ] ; ring;
       · unfold binTerm; ring;
     have h_r_increasing_seq : ∀ k, i ≤ k → k ≤ t → binTerm ((t : ℝ) / n) n i ≤ binTerm ((t : ℝ) / n) n k := by
@@ -115,7 +115,7 @@ lemma exp_H_eq {n t : ℕ} (h1 : 1 ≤ t) (h2 : t + 1 ≤ n) :
   convert Real.exp_log ?_ using 1;
   · unfold H;
     rw [ Real.log_inv, Real.log_mul ] <;> norm_num;
-    · unfold Real.binEntropy; rw [ Nat.cast_sub ( by linarith ) ] ; ring;
+    · unfold Real.binEntropy; rw [ Nat.cast_sub ( by linarith ) ] ; ring_nf;
       by_cases hn : n = 0 <;> simp_all +decide [ Real.log_mul, ne_of_gt ( zero_lt_one.trans_le h1 ) ] ; ring;
     · grind;
     · exact fun h => absurd h <| sub_ne_zero_of_ne <| Ne.symm <| by rw [ Ne.eq_def, div_eq_iff ] <;> norm_cast <;> linarith;

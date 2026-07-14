@@ -107,31 +107,31 @@ lemma mgl_core_inequality {p q : ℝ} (hp0 : 0 < p) (hq_lt : p < q) (hq12 : q < 
       linarith
     have hxden : 1 - 2 * x ≠ 0 := ne_of_gt hxdenpos
     have hone : HasDerivAt (fun y : ℝ => 1 - y) (-1) x := by
-      convert (hasDerivAt_const x 1).sub (hasDerivAt_id x) using 1 <;> norm_num
+      (convert (hasDerivAt_const x 1).sub (hasDerivAt_id x) using 1; norm_num)
     have hquot : HasDerivAt (fun y : ℝ => (1 - y) / y) (-1 / x ^ 2) x := by
       have hquot0 : HasDerivAt (fun y : ℝ => (1 - y) / y)
           ((-1 * x - (1 - x) * 1) / x ^ 2) x := by
         simpa only [id_eq] using hone.div (hasDerivAt_id x) hx0
-      convert hquot0 using 1 <;> field_simp <;> ring
+      (convert hquot0 using 1; field_simp; ring)
     have hlog : HasDerivAt (fun y : ℝ => log ((1 - y) / y))
         (-1 / (x * (1 - x))) x := by
-      convert hquot.log (div_ne_zero hx1 hx0) using 1 <;> field_simp <;> ring
+      (convert hquot.log (div_ne_zero hx1 hx0) using 1; field_simp)
     have hrat : HasDerivAt (fun y : ℝ => (y * (1 - y)) / (1 - 2 * y))
         ((1 - 2 * x + 2 * x ^ 2) / (1 - 2 * x) ^ 2) x := by
       have hnum' : HasDerivAt (fun y : ℝ => y * (1 - y)) (1 - 2 * x) x := by
         have hnum0 : HasDerivAt (fun y : ℝ => y * (1 - y))
             (1 * (1 - x) + x * (-1)) x := by
           simpa only [id_eq] using (hasDerivAt_id x).mul hone
-        convert hnum0 using 1 <;> ring
+        (convert hnum0 using 1; ring)
       have hden' : HasDerivAt (fun y : ℝ => 1 - 2 * y) (-2) x := by
-        convert (hasDerivAt_const x 1).sub ((hasDerivAt_const x 2).mul (hasDerivAt_id x))
-          using 1 <;> norm_num
-      convert hnum'.div hden' hxden using 1 <;> field_simp <;> ring
+        (convert (hasDerivAt_const x 1).sub ((hasDerivAt_const x 2).mul (hasDerivAt_id x))
+          using 1; norm_num)
+      (convert hnum'.div hden' hxden using 1; field_simp; ring)
     have hk : HasDerivAt k
         (((1 - 2 * x + 2 * x ^ 2) / (1 - 2 * x) ^ 2) * log ((1 - x) / x) -
           1 / (1 - 2 * x)) x := by
       dsimp [k]
-      convert hrat.mul hlog using 1 <;> field_simp <;> ring
+      (convert hrat.mul hlog using 1; field_simp; ring)
     rw [hk.deriv]
     have hz : 0 < (1 - x) / x - 1 := by
       rw [sub_pos, one_lt_div₀ hx.1]
@@ -155,7 +155,7 @@ lemma mgl_core_inequality {p q : ℝ} (hp0 : 0 < p) (hq_lt : p < q) (hq12 : q < 
     have hmul := mul_lt_mul_of_pos_left hmain
       (div_pos hnum (sq_pos_of_pos hxdenpos))
     rw [sub_pos]
-    convert hmul using 1 <;> field_simp <;> ring
+    (convert hmul using 1; field_simp)
   have hkcont : ContinuousOn k (Ioo (0 : ℝ) (1 / 2)) := by
     intro x hx
     apply ContinuousAt.continuousWithinAt
@@ -172,7 +172,7 @@ lemma mgl_core_inequality {p q : ℝ} (hp0 : 0 < p) (hq_lt : p < q) (hq12 : q < 
     · exact ((continuousAt_id.mul (continuousAt_const.sub continuousAt_id)).div
         (continuousAt_const.sub ((continuousAt_const.mul continuousAt_id))) hxden)
     · have hone : HasDerivAt (fun y : ℝ => 1 - y) (-1) x := by
-        convert (hasDerivAt_const x 1).sub (hasDerivAt_id x) using 1 <;> norm_num
+        (convert (hasDerivAt_const x 1).sub (hasDerivAt_id x) using 1; norm_num)
       exact (hone.div (hasDerivAt_id x) hx0).log (div_ne_zero hx1 hx0) |>.continuousAt
   have hmono : StrictMonoOn k (Ioo (0 : ℝ) (1 / 2)) :=
     strictMonoOn_of_deriv_pos (convex_Ioo (0 : ℝ) (1 / 2)) hkcont (by simpa using hkderiv)
@@ -234,8 +234,8 @@ lemma mglSlope_strictMonoOn {tau : ℝ} (ht0 : 0 < tau) (ht1 : tau < 1 / 2) :
     have h1 := (Real.hasDerivAt_log (by linarith : 1 - p ≠ 0)).comp p
       ((hasDerivAt_const p 1).sub (hasDerivAt_id p))
     have h2 := Real.hasDerivAt_log (ne_of_gt hp0)
-    convert h1.sub h2 using 1 <;>
-      field_simp [ne_of_gt hp0, ne_of_gt (sub_pos.mpr hp1)] <;> ring
+    (convert h1.sub h2 using 1;
+      field_simp [ne_of_gt hp0, ne_of_gt (sub_pos.mpr hp1)]; ring)
   have hLpos (p : ℝ) (hp : p ∈ Ioo (0 : ℝ) (1 / 2)) : 0 < L p := by
     dsimp [L]
     rw [sub_pos]
@@ -250,20 +250,20 @@ lemma mglSlope_strictMonoOn {tau : ℝ} (ht0 : 0 < tau) (ht1 : tau < 1 / 2) :
     have hq1 : Q p < 1 := hqp.2.trans (by norm_num)
     have hQder : HasDerivAt Q a p := by
       dsimp [Q]
-      convert (hasDerivAt_const p tau).add ((hasDerivAt_const p a).mul (hasDerivAt_id p))
-        using 1 <;> simp only [id_eq] <;> ring
+      (convert (hasDerivAt_const p tau).add ((hasDerivAt_const p a).mul (hasDerivAt_id p))
+        using 1; simp only [id_eq]; ring)
     have hLQ : HasDerivAt (fun x => L (Q x))
         (-a / (Q p * (1 - Q p))) p := by
-      convert (hLder (Q p) (hp.1.trans hqp.1) hq1).comp p hQder using 1 <;>
-        field_simp <;> ring
+      (convert (hLder (Q p) (hp.1.trans hqp.1) hq1).comp p hQder using 1;
+        field_simp)
     have hd : HasDerivAt d
         (a * ((-a / (Q p * (1 - Q p))) * L p - L (Q p) * (-1 / (p * (1 - p)))) /
           (L p) ^ 2) p := by
       dsimp [d]
       have hn : HasDerivAt (fun x => a * L (Q x))
           (a * (-a / (Q p * (1 - Q p)))) p := by
-        convert (hasDerivAt_const p a).mul hLQ using 1 <;> ring
-      convert hn.div (hLder p hp.1 hp1) (ne_of_gt (hLpos p hp)) using 1 <;> ring
+        (convert (hasDerivAt_const p a).mul hLQ using 1; ring)
+      (convert hn.div (hLder p hp.1 hp1) (ne_of_gt (hLpos p hp)) using 1; ring)
     rw [hd.deriv]
     have hk := mgl_core_inequality hp.1 hqp.1 hqp.2
     dsimp only at hk
@@ -286,7 +286,7 @@ lemma mglSlope_strictMonoOn {tau : ℝ} (ht0 : 0 < tau) (ht1 : tau < 1 / 2) :
       have hk' := (div_lt_div_iff₀ hdenp (mul_pos ha hdenp)).mp hk
       have hk'' : (a * (p * (1 - p)) * L p) * (1 - 2 * p) <
           ((Q p * (1 - Q p)) * L (Q p)) * (1 - 2 * p) := by
-        convert hk' using 1 <;> ring
+        (convert hk' using 1; ring)
       nlinarith
     have hpprod : 0 < p * (1 - p) := mul_pos hp.1 (by linarith)
     have hqprod : 0 < Q p * (1 - Q p) := mul_pos (hp.1.trans hqp.1) (by linarith)
@@ -355,12 +355,12 @@ lemma mglCurve_hasDerivAt {tau u : ℝ} (ht0 : 0 < tau) (ht1 : tau < 1 / 2)
   have hinv := hbInv_hasDerivAt hu
   have hinner : HasDerivAt (fun y => tau + a * hbInv y) (a * (log (1 - p) - log p)⁻¹) u := by
     change HasDerivAt hbInv (log (1 - p) - log p)⁻¹ u at hinv
-    convert (hasDerivAt_const u tau).add ((hasDerivAt_const u a).mul hinv) using 1 <;> ring
+    (convert (hasDerivAt_const u tau).add ((hasDerivAt_const u a).mul hinv) using 1; ring)
   have houter : HasDerivAt Hb (log (1 - q) - log q) q := by
     simpa [Hb] using Real.hasDerivAt_binEntropy (ne_of_gt (hp.1.trans hq.1)) (by linarith : q ≠ 1)
   change HasDerivAt (fun y => Hb (tau + (1 - 2 * tau) * hbInv y)) _ u
-  convert houter.comp u hinner using 1 <;>
-    dsimp [a, p, q] <;> field_simp [ne_of_gt hLp] <;> ring
+  (convert houter.comp u hinner using 1;
+    dsimp [a, p, q]; field_simp [ne_of_gt hLp])
 
 theorem mglCurve_strictConvex {tau : ℝ} (ht0 : 0 < tau) (ht1 : tau < 1 / 2) :
     StrictConvexOn ℝ (Icc 0 (log 2)) (mglCurve tau) := by

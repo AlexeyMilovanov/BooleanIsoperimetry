@@ -244,8 +244,7 @@ lemma prefixSupport_succ_absent {n k : ℕ} (hk : k < n) :
     · intro i hi
       exact Nat.lt_succ_of_lt (hc i hi)
     · intro ht
-      have := hc (⟨k, hk⟩ : Fin n) ht
-      exact (Nat.lt_irrefl k (by simpa using this)).elim
+      exact (Nat.lt_irrefl k (hc ⟨k, hk⟩ ht)).elim
 
 lemma prefixSupport_succ_present {n k : ℕ} (hk : k < n) :
     (prefixSupport (n := n) (k + 1)).filter
@@ -334,7 +333,7 @@ lemma prefixMarginal_succ_present {n k : ℕ} (mu : Cube n → ℝ)
         have he := congrArg (fun s : Cube n => s.erase (⟨k, hk⟩ : Fin n)) h
         simpa [Finset.erase_insert htx, Finset.erase_insert htc] using he
       · exact congrArg _
-    simpa only [hinj]
+    simp only [hinj]
   · simp only [hx, and_false, if_false]
     apply if_neg
     intro heq
@@ -622,6 +621,8 @@ lemma sum_mglCurve_stepEntropy_ge
 lemma mglCurve_Hb_eq_all {tau p : ℝ} (ht0 : 0 < tau) (ht1 : tau < 1 / 2)
   (hp : p ∈ Set.Icc (0 : ℝ) 1) :
   mglCurve tau (Hb p) = Hb (tau + (1 - 2*tau)*p) := by
+  have _ := ht0
+  have _ := ht1
   rcases le_or_gt p (1/2) with h1 | h1
   · have h_inv : hbInv (Hb p) = p := by
       have hp_mem : p ∈ Icc (0 : ℝ) 2⁻¹ := by

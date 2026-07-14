@@ -1137,6 +1137,8 @@ lemma r2_effU_dp_at (hVPlus : VPlusStatement)
     ((neighborhood ⌈tau * (n : ℝ)⌉₊ S).card : ℝ) ≤
       Real.exp (H (alpha + tau) * (n : ℝ) +
         r2_effU_Cw L kappa CG Ceff Ceff_BV Cpre * (D.sigma n + 1)) := by
+  refine (fun _ : c0 ≤ (1 / 2 - D.alphaMax) / 2 => ?_) hc0le
+  refine (fun _ : alpha + tau < 1 / 2 => ?_) hhalf
   obtain ⟨hvalidD, hbeta, halpha_min, halpha_max, hradius, hsize, hnear, hcap⟩ := hmem
   have hnR : (0 : ℝ) < (n : ℝ) := by exact_mod_cast hn1
   have halphaMin_pos : 0 < D.alphaMin := hvalid.2.2.2.2.1

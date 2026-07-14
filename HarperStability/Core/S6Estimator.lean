@@ -278,7 +278,7 @@ lemma core_windowProb_reindex_le (m : ℕ) (p : ℝ) (hp0 : 0 < p)
     · simp +contextual [ Finset.ext_iff ];
       grind;
     · exact fun J hJ => ⟨ J.erase t, by aesop ⟩;
-    · intro J hJ; rw [ hφ J t ( by simpa using hJ ) ] ; simp +decide [ windowProb, Finset.card_insert_of_notMem ( by simpa using hJ ) ] ; ring;
+    · intro J hJ; rw [ hφ J t ( by simpa using hJ ) ] ; simp +decide [ windowProb, Finset.card_insert_of_notMem ( by simpa using hJ ) ] ; ring_nf;
       field_simp;
       exact Or.inl ( by rw [ ← pow_succ', show m - J.card = m - ( 1 + J.card ) + 1 by exact Nat.sub_eq_of_eq_add <| by linarith [ Nat.sub_add_cancel <| show 1 + J.card ≤ m from by linarith [ show J.card < m from lt_of_lt_of_le ( Finset.card_lt_card <| Finset.ssubset_iff_subset_ne.mpr ⟨ Finset.subset_univ J, by aesop_cat ⟩ ) ( by simp ) ] ] ] );
   have h_sum_reindex : ∑ J, windowProb J p * ∑ t, φ J t = ∑ t : Fin m, ∑ J ∈ Finset.univ.filter (fun J => t ∈ J), windowProb J p * φ J t + ∑ t : Fin m, ∑ J ∈ Finset.univ.filter (fun J => t ∉ J), windowProb J p * φ J t := by

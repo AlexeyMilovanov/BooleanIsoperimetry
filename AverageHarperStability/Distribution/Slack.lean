@@ -36,8 +36,8 @@ lemma mglCurve_slope_cap {tau : ℝ} (ht0 : 0 < tau) (ht1 : tau < 1 / 2)
     have h1 := (Real.hasDerivAt_log (by linarith : 1 - x ≠ 0)).comp x
       ((hasDerivAt_const x 1).sub (hasDerivAt_id x))
     have h2 := Real.hasDerivAt_log (ne_of_gt hx0)
-    convert h1.sub h2 using 1 <;>
-      field_simp [ne_of_gt hx0, ne_of_gt (sub_pos.mpr hx1)] <;> ring
+    (convert h1.sub h2 using 1;
+      field_simp [ne_of_gt hx0, ne_of_gt (sub_pos.mpr hx1)]; ring)
   have hFder (x : ℝ) (hx : x ∈ Icc p (1 / 2)) :
       HasDerivAt F
         (a * (-1 / (x * (1 - x))) -
@@ -49,14 +49,14 @@ lemma mglCurve_slope_cap {tau : ℝ} (ht0 : 0 < tau) (ht1 : tau < 1 / 2)
     have hqx1 : q x < 1 := hqx.2.trans_lt (by norm_num)
     have hqder : HasDerivAt q a x := by
       dsimp [q]
-      convert (hasDerivAt_const x tau).add
-        ((hasDerivAt_const x a).mul (hasDerivAt_id x)) using 1 <;> ring
+      (convert (hasDerivAt_const x tau).add
+        ((hasDerivAt_const x a).mul (hasDerivAt_id x)) using 1; ring)
     have hLq : HasDerivAt (fun y => L (q y))
         (-a / (q x * (1 - q x))) x := by
       convert (hLder (q x) hqx0 hqx1).comp x hqder using 1
       field_simp
     dsimp [F]
-    convert ((hasDerivAt_const x a).mul (hLder x hx0 hx1)).sub hLq using 1 <;> ring
+    (convert ((hasDerivAt_const x a).mul (hLder x hx0 hx1)).sub hLq using 1; ring)
   have hFder_nonpos (x : ℝ) (hx : x ∈ Icc p (1 / 2)) :
       a * (-1 / (x * (1 - x))) -
           (-a / (q x * (1 - q x))) ≤ 0 := by
@@ -91,7 +91,7 @@ lemma mglCurve_slope_cap {tau : ℝ} (ht0 : 0 < tau) (ht1 : tau < 1 / 2)
     have hqhalf : q (1 / 2) = 1 / 2 := by dsimp [q, a]; ring
     dsimp [F, L]
     rw [hqhalf]
-    ring
+    ring_nf
   have hLineq : L (q p) ≤ a * L p := by
     rw [hFhalf] at hFineq
     dsimp [F] at hFineq
@@ -473,15 +473,15 @@ theorem Hb_jensen_gap_ge_two_variance
         intro p hp; convert HasDerivAt.deriv ( HasDerivAt.add ( Real.hasDerivAt_binEntropy hp.1.ne' hp.2.ne ) ( HasDerivAt.const_mul 2 ( hasDerivAt_pow 2 p ) ) ) using 1 ; ring;
       -- Let's calculate the second derivative of $g(p) = H(p) + 2p^2$.
       have h_deriv2 : ∀ p ∈ Set.Ioo (0 : ℝ) 1, deriv (deriv (fun p => Real.binEntropy p + 2 * p^2)) p = -1 / (1 - p) - 1 / p + 4 := by
-        intro p hp; refine' HasDerivAt.deriv _ ; convert HasDerivAt.congr_of_eventuallyEq _ ( Filter.eventuallyEq_of_mem ( Ioo_mem_nhds hp.1 hp.2 ) fun x hx => h_deriv x hx ) using 1 ; ring;
+        intro p hp; refine' HasDerivAt.deriv _ ; convert HasDerivAt.congr_of_eventuallyEq _ ( Filter.eventuallyEq_of_mem ( Ioo_mem_nhds hp.1 hp.2 ) fun x hx => h_deriv x hx ) using 1 ; ring_nf;
         convert HasDerivAt.add ( HasDerivAt.mul ( hasDerivAt_id p ) ( hasDerivAt_const _ _ ) ) ( HasDerivAt.sub ( HasDerivAt.log ( hasDerivAt_id p |> HasDerivAt.const_sub 1 ) ( by linarith [ hp.1, hp.2 ] : ( 1 - p ) ≠ 0 ) ) ( HasDerivAt.log ( hasDerivAt_id p ) ( by linarith [ hp.1, hp.2 ] : p ≠ 0 ) ) ) using 1 ; ring!;
       intro p hp hp'; rw [ h_deriv2 p ⟨ hp, hp' ⟩ ] ; ring_nf; nlinarith [ inv_pos.2 hp, inv_pos.2 ( sub_pos.2 hp' ), mul_inv_cancel₀ ( ne_of_gt hp ), mul_inv_cancel₀ ( ne_of_gt ( sub_pos.2 hp' ) ), sq_nonneg ( p - 1 / 2 ) ] ;
   -- Apply Jensen's inequality to the concave function $g(p) = Hb(p) + 2p^2$.
   have h_jensen : ∑ i ∈ s, w i * (Hb (b i) + 2 * (b i)^2) ≤ Hb (∑ i ∈ s, w i * b i) + 2 * (∑ i ∈ s, w i * b i)^2 := by
     convert h_concave.le_map_sum _ _ _ <;> aesop;
-  simp_all +decide [ mul_add, mul_sub, Finset.sum_add_distrib, Finset.sum_sub_distrib, sub_sq, mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _, Finset.sum_mul _ _ _ ];
-  simp_all +decide [ ← mul_assoc, ← Finset.mul_sum _ _ _, ← Finset.sum_mul, ← Finset.sum_comm ];
-  simp_all +decide [ ← Finset.mul_sum _ _ _, ← Finset.sum_mul, mul_assoc, mul_comm, mul_left_comm, sq ];
+  simp_all +decide [ mul_add, mul_sub, Finset.sum_add_distrib, Finset.sum_sub_distrib, sub_sq, mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _ ];
+  simp_all +decide [ ← mul_assoc, ← Finset.sum_mul, ← Finset.sum_comm ];
+  simp_all +decide [ ← Finset.mul_sum _ _ _, mul_assoc, mul_comm, mul_left_comm, sq ];
   simp_all +decide [ ← mul_assoc, ← Finset.sum_mul _ _ _ ] ; linarith
 
 end AverageHarperStability

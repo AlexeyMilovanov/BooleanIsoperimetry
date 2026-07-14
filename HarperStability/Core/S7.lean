@@ -197,8 +197,8 @@ lemma heavy_fiber_in_good_set {m : ℕ} {B : Type*} [DecidableEq B]
     · exact ⟨ f ( Classical.choose ( Finset.card_pos.mp ( show 0 < Finset.card Gtyp from Nat.cast_pos.mp ( lt_of_lt_of_le ( by exact mul_pos ( half_pos hc ) ( Nat.cast_pos.mpr hA.card_pos ) ) hGtyp_card ) ) ) ), hGtyp_subset_Vtyp _ ( Classical.choose_spec ( Finset.card_pos.mp ( show 0 < Finset.card Gtyp from Nat.cast_pos.mp ( lt_of_lt_of_le ( by exact mul_pos ( half_pos hc ) ( Nat.cast_pos.mpr hA.card_pos ) ) hGtyp_card ) ) ) ) ⟩;
   refine' ⟨ b, _ ⟩;
   refine' le_trans _ ( hb.2.trans' ( div_le_div_of_nonneg_left _ _ hVtyp_card ) );
-  · convert mul_le_mul_of_nonneg_right hGtyp_card ( inv_nonneg.mpr ( Real.exp_nonneg T ) ) using 1 ; ring;
-    rw [ ← Real.exp_neg ] ; ring!;
+  · convert mul_le_mul_of_nonneg_right hGtyp_card ( inv_nonneg.mpr ( Real.exp_nonneg T ) ) using 1 ; ring_nf;
+    rw [ ← Real.exp_neg ] ; ring_nf!;
   · positivity;
   · exact Nat.cast_pos.mpr ( Finset.card_pos.mpr ⟨ _, hb.1 ⟩ )
 

@@ -314,14 +314,14 @@ theorem entropy_le_of_mean_card
         have h_sum_q : ∑ x : Finset (Fin n), m ^ (x.card : ℝ) * (1 - m) ^ ((n : ℝ) - x.card) = (∑ x : Finset (Fin n), m ^ x.card * (1 - m) ^ (n - x.card)) := by
           exact Finset.sum_congr rfl fun x hx => by rw [ ← Nat.cast_sub ( show x.card ≤ n from le_trans ( Finset.card_le_univ _ ) ( by norm_num ) ) ] ; norm_cast;
         have h_sum_q : ∑ x : Finset (Fin n), m ^ x.card * (1 - m) ^ (n - x.card) = (m + (1 - m)) ^ n := by
-          exact?;
+          exact Fin.sum_pow_mul_eq_add_pow m (1 - m);
         aesop;
       simp_all +decide [ Finset.sum_add_distrib, Finset.sum_sub_distrib ];
       linarith [ hnu.2 ];
     -- Simplify the sum $\sum x, nu x * \log(m^{x.card} * (1-m)^{n-x.card})$.
     have h_simplify : ∑ x, nu x * Real.log (m ^ (x.card : ℝ) * (1 - m) ^ ((n : ℝ) - x.card)) = (∑ x, nu x * (x.card : ℝ)) * Real.log m + (n - ∑ x, nu x * (x.card : ℝ)) * Real.log (1 - m) := by
       rw [ Finset.sum_congr rfl fun x hx => by rw [ Real.log_mul ( by positivity ) ( by exact ne_of_gt ( Real.rpow_pos_of_pos ( by linarith ) _ ) ), Real.log_rpow ( by positivity ), Real.log_rpow ( by linarith ) ] ];
-      simp +decide [ mul_add, mul_sub, Finset.sum_add_distrib, Finset.sum_mul _ _ _, mul_assoc, mul_comm, mul_left_comm, Finset.mul_sum _ _ _, hnu.2 ];
+      simp +decide [ mul_add, mul_sub, Finset.sum_add_distrib, Finset.sum_mul _ _ _, mul_assoc, mul_comm, Finset.mul_sum _ _ _ ];
       simp +decide [ sub_mul, mul_sub, Finset.sum_sub_distrib, ← mul_assoc, ← Finset.sum_mul, hnu.2 ];
     unfold entropy Hb;
     unfold Real.binEntropy;
@@ -349,12 +349,12 @@ theorem hoeffding_logmgf_bound {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (t : �
       · refine' DifferentiableOn.sub _ _ <;> norm_num [ Real.differentiable_exp, mul_comm p ];
         · exact DifferentiableOn.div ( DifferentiableOn.mul ( Real.differentiable_exp.differentiableOn ) ( differentiableOn_const _ ) ) ( DifferentiableOn.add ( differentiableOn_const _ ) ( DifferentiableOn.mul ( Real.differentiable_exp.differentiableOn ) ( differentiableOn_const _ ) ) ) fun x hx => by cases lt_or_eq_of_le hp0 <;> cases lt_or_eq_of_le hp1 <;> nlinarith [ Real.exp_pos x ] ;
         · exact differentiableOn_id.div_const _;
-      · intro x hx; norm_num [ g, Real.differentiableAt_exp, mul_comm p, show ( 1 - p + p * Real.exp x ) ≠ 0 from by cases lt_or_eq_of_le hp0 <;> cases lt_or_eq_of_le hp1 <;> nlinarith [ Real.exp_pos x ] ] ; ring;
+      · intro x hx; norm_num [ g, Real.differentiableAt_exp, mul_comm p, show ( 1 - p + p * Real.exp x ) ≠ 0 from by cases lt_or_eq_of_le hp0 <;> cases lt_or_eq_of_le hp1 <;> nlinarith [ Real.exp_pos x ] ] ; ring_nf;
         norm_num [ Real.differentiableAt_exp, show ( 1 - p + p * Real.exp x ) ≠ 0 from by cases lt_or_eq_of_le hp0 <;> cases lt_or_eq_of_le hp1 <;> nlinarith [ Real.exp_pos x ] ] ; ring;
     · -- Let's calculate the second derivative of $g(t)$.
       have hg'' : ∀ t, deriv^[2] g t = (p * (1 - p) * Real.exp t) / (1 - p + p * Real.exp t)^2 - 1 / 4 := by
         have hg'' : ∀ t, deriv^[2] g t = deriv (fun t => -p + (p * Real.exp t) / (1 - p + p * Real.exp t) - t / 4) t := by
-          intro t; refine' Filter.EventuallyEq.deriv_eq _ ; filter_upwards [ ] with t ; norm_num [ Real.differentiableAt_exp, mul_comm p, ne_of_gt ( show 0 < 1 - p + p * Real.exp t from by cases lt_or_eq_of_le hp0 <;> cases lt_or_eq_of_le hp1 <;> nlinarith [ Real.exp_pos t ] ) ] ; ring;
+          intro t; refine' Filter.EventuallyEq.deriv_eq _ ; filter_upwards [ ] with t ; norm_num [ Real.differentiableAt_exp, mul_comm p, ne_of_gt ( show 0 < 1 - p + p * Real.exp t from by cases lt_or_eq_of_le hp0 <;> cases lt_or_eq_of_le hp1 <;> nlinarith [ Real.exp_pos t ] ) ] ; ring_nf;
           convert HasDerivAt.deriv ( HasDerivAt.sub ( HasDerivAt.add ( HasDerivAt.const_mul ( -p ) ( hasDerivAt_id t ) ) ( HasDerivAt.log ( HasDerivAt.add ( hasDerivAt_const _ _ ) ( HasDerivAt.mul ( hasDerivAt_const _ _ ) ( Real.hasDerivAt_exp t ) ) ) _ ) ) ( HasDerivAt.div_const ( hasDerivAt_pow 2 t ) _ ) ) using 1 <;> norm_num ; ring;
           cases lt_or_eq_of_le hp0 <;> cases lt_or_eq_of_le hp1 <;> nlinarith [ Real.exp_pos t ];
         intro t; rw [ hg'' ] ; norm_num [ Real.differentiableAt_exp, ne_of_gt ( show 0 < 1 - p + p * Real.exp t from by cases lt_or_eq_of_le hp0 <;> cases lt_or_eq_of_le hp1 <;> nlinarith [ Real.exp_pos t ] ) ] ; ring;
@@ -409,13 +409,13 @@ theorem finite_hoeffding_step
         have h_convex : ConvexOn ℝ (Set.univ : Set ℝ) Real.exp := by
           exact convexOn_exp;
         intro i hi; have := h_convex.2 ( Set.mem_univ ( lambda * a ) ) ( Set.mem_univ ( lambda * b ) ) ; simp_all +decide [ div_eq_inv_mul ] ;
-        convert @this ( ( b - Y i ) / ( b - a ) ) ( ( Y i - a ) / ( b - a ) ) ( div_nonneg ( by linarith [ hY i hi ] ) ( by linarith [ hY i hi ] ) ) ( div_nonneg ( by linarith [ hY i hi ] ) ( by linarith [ hY i hi ] ) ) ( by rw [ ← add_div, div_eq_iff ] <;> linarith [ hY i hi ] ) using 1 ; ring;
+        convert @this ( ( b - Y i ) / ( b - a ) ) ( ( Y i - a ) / ( b - a ) ) ( div_nonneg ( by linarith [ hY i hi ] ) ( by linarith [ hY i hi ] ) ) ( div_nonneg ( by linarith [ hY i hi ] ) ( by linarith [ hY i hi ] ) ) ( by rw [ ← add_div, div_eq_iff ] <;> linarith [ hY i hi ] ) using 1 ; ring_nf;
         · grind;
         · ring;
       simpa only [ mul_assoc, mul_add, Finset.sum_add_distrib ] using Finset.sum_le_sum fun i hi => mul_le_mul_of_nonneg_left ( h_jensen i hi ) ( hw i hi );
     -- Simplify the expression using the fact that $\sum_{i \in s} w_i = 1$ and $\sum_{i \in s} w_i Y_i = 0$.
     have h_simplify : ∑ i ∈ s, w i * ((b - Y i) / (b - a)) * Real.exp (lambda * a) + ∑ i ∈ s, w i * ((Y i - a) / (b - a)) * Real.exp (lambda * b) = (b / (b - a)) * Real.exp (lambda * a) - (a / (b - a)) * Real.exp (lambda * b) := by
-      simp +decide [ ← Finset.sum_mul _ _ _, ← Finset.mul_sum, ← Finset.sum_div, hwsum, hmean, sub_mul, mul_sub, div_eq_mul_inv ];
+      simp +decide [ ← Finset.sum_mul _ _ _, hwsum, sub_mul, mul_sub, div_eq_mul_inv ];
       simp +decide [ ← mul_assoc, ← Finset.sum_mul, hmean ];
       ring;
     -- Apply the scalar bound from `hoeffding_logmgf_bound`.
@@ -430,8 +430,8 @@ theorem finite_hoeffding_step
       rw [ show b / ( b - a ) = 1 - ( -a / ( b - a ) ) by rw [ one_sub_div ( by linarith ) ] ; ring, show a / ( b - a ) = - ( -a / ( b - a ) ) by rw [ neg_div' ] ; ring ] ; ring_nf at *;
       convert Real.exp_le_exp.mpr this using 1;
       rw [ Real.exp_add, Real.exp_log ];
-      · rw [ show a * b * ( -a + b ) ⁻¹ *lambda - a ^ 2 * ( -a + b ) ⁻¹ *lambda = a *lambda by nlinarith [ mul_inv_cancel_left₀ ( by linarith : ( -a + b ) ≠ 0 ) ( a *lambda ) ] ] ; ring;
-        simpa only [ mul_assoc, ← Real.exp_add ] using by ring;
+      · rw [ show a * b * ( -a + b ) ⁻¹ *lambda - a ^ 2 * ( -a + b ) ⁻¹ *lambda = a *lambda by nlinarith [ mul_inv_cancel_left₀ ( by linarith : ( -a + b ) ≠ 0 ) ( a *lambda ) ] ] ; ring_nf;
+        simpa only [ mul_assoc, ← Real.exp_add ] using by ring_nf;
       · by_cases ha : a = 0;
         · simp [ha];
         · cases lt_or_gt_of_ne ha <;> nlinarith [ inv_mul_cancel_left₀ ( by linarith : ( -a + b ) ≠ 0 ) a, Real.exp_pos ( - ( a * lambda ) + b * lambda ) ];
@@ -444,6 +444,7 @@ theorem distribution_stability_core {tau zeta : ℝ} (ht0 : 0 < tau) (ht1 : tau 
     (hzeta2 : hbInv (entropyRate n mu) ≤ 1 / 2 - zeta)
     (h_ent : entropy (noiseMass tau mu) ≤ (n : ℝ) * mglCurve tau (entropyRate n mu) + delta * (n : ℝ)) :
     distributionStabilityConclusion (err_val tau zeta delta) mu := by
+  have _ := hd1
   -- Split on whether the (worker-chosen) error budget already dominates the
   -- maximal possible entropy `n log 2`.  If it does, the identity label map is a
   -- valid witness: its pushforward is `mu` itself (entropy `≤ n log 2 ≤ err n`),

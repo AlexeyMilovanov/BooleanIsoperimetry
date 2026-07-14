@@ -309,9 +309,9 @@ lemma r3_H_shift_le {a δ : ℝ} (ha : 0 ≤ a) (hδ : 0 < δ) (hle : a + δ ≤
   by_cases ha0 : a = 0;
   · unfold H; aesop;
   · have := h_concave.2 ( show 0 ∈ Set.Icc 0 1 by norm_num ) ( show a + δ ∈ Set.Icc 0 1 by constructor <;> linarith );
-    have := @this ( δ / ( a + δ ) ) ( a / ( a + δ ) ) ( by positivity ) ( by positivity ) ( by rw [ ← add_div, div_eq_iff ] <;> linarith ) ; simp_all +decide [ mul_comm, mul_div_cancel₀, ne_of_gt ] ;
+    have := @this ( δ / ( a + δ ) ) ( a / ( a + δ ) ) ( by positivity ) ( by positivity ) ( by rw [ ← add_div, div_eq_iff ] <;> linarith ) ; simp_all +decide [ mul_comm ] ;
     simp_all +decide [ mul_div_cancel₀ _ ( by positivity : ( a + δ ) ≠ 0 ) ];
-    rename_i h; have := @h ( a / ( a + δ ) ) ( δ / ( a + δ ) ) ( by positivity ) ( by positivity ) ( by rw [ ← add_div, div_eq_iff ] <;> linarith ) ; simp_all +decide [ mul_div_cancel₀ _ ( by positivity : ( a + δ ) ≠ 0 ) ] ;
+    rename_i h; have := @h ( a / ( a + δ ) ) ( δ / ( a + δ ) ) ( by positivity ) ( by positivity ) ( by rw [ ← add_div, div_eq_iff ] <;> linarith ) ; simp_all +decide ;
     simp_all +decide [ H, div_mul_cancel₀ _ ( by positivity : ( a + δ ) ≠ 0 ) ];
     rw [ div_mul_eq_mul_div, div_le_iff₀ ] at * <;> nlinarith [ mul_self_pos.mpr ha0 ]
 
@@ -351,7 +351,7 @@ private lemma r3_runMax_sublinear {s : ℕ → ℝ} (hs : Sublinear s) :
       exact ⟨ ∑ j ∈ Finset.range ( N + 1 ), |s j|, fun j hj => le_trans ( le_abs_self _ ) ( Finset.single_le_sum ( fun i _ => abs_nonneg ( s i ) ) ( Finset.mem_range_succ_iff.mpr hj ) ) ⟩;
     refine' ⟨ N + ⌈2 * C / ε⌉₊ + 1, fun n hn => _ ⟩;
     refine' Finset.sup'_le _ _ _;
-    intro j hj; by_cases hj' : j ≤ N <;> simp_all +decide [ Nat.lt_succ_iff ] ;
+    intro j hj; by_cases hj' : j ≤ N <;> simp_all +decide ;
     · nlinarith [ Nat.le_ceil ( 2 * C / ε ), mul_div_cancel₀ ( 2 * C ) hε.ne', show ( n : ℝ ) ≥ N + ⌈2 * C / ε⌉₊ + 1 by exact_mod_cast hn, hC j hj' ];
     · nlinarith [ hN j hj'.le, show ( j : ℝ ) ≤ n by norm_cast ]
 
@@ -379,7 +379,7 @@ private lemma r3_entropy_growth_robust {q ζ p t a δ : ℝ}
       have h_deriv_nonneg : ∀ x ∈ Set.Ioo 0 (1 / 2), deriv (fun x => x * Real.log (1 / x) + (1 - x) * Real.log (1 / (1 - x))) x ≥ 0 := by
         intro x hx; norm_num [ show x ≠ 0 from hx.1.ne', show 1 - x ≠ 0 from by linarith [ hx.2 ], Real.log_div, Real.log_mul, sub_ne_zero ] ; ring_nf;
         have h_deriv_nonneg : deriv (fun x => -(x * Real.log x) + (x * Real.log (1 - x) - Real.log (1 - x))) x = -Real.log x - 1 + Real.log (1 - x) + x * (-1 / (1 - x)) - (-1 / (1 - x)) := by
-          convert HasDerivAt.deriv ( HasDerivAt.add ( HasDerivAt.neg ( HasDerivAt.mul ( hasDerivAt_id x ) ( Real.hasDerivAt_log hx.1.ne' ) ) ) ( HasDerivAt.sub ( HasDerivAt.mul ( hasDerivAt_id x ) ( HasDerivAt.log ( hasDerivAt_id x |> HasDerivAt.const_sub 1 ) ( by linarith [ hx.1, hx.2 ] : ( 1 - x ) ≠ 0 ) ) ) ( HasDerivAt.log ( hasDerivAt_id x |> HasDerivAt.const_sub 1 ) ( by linarith [ hx.1, hx.2 ] : ( 1 - x ) ≠ 0 ) ) ) ) using 1 ; ring;
+          convert HasDerivAt.deriv ( HasDerivAt.add ( HasDerivAt.neg ( HasDerivAt.mul ( hasDerivAt_id x ) ( Real.hasDerivAt_log hx.1.ne' ) ) ) ( HasDerivAt.sub ( HasDerivAt.mul ( hasDerivAt_id x ) ( HasDerivAt.log ( hasDerivAt_id x |> HasDerivAt.const_sub 1 ) ( by linarith [ hx.1, hx.2 ] : ( 1 - x ) ≠ 0 ) ) ) ( HasDerivAt.log ( hasDerivAt_id x |> HasDerivAt.const_sub 1 ) ( by linarith [ hx.1, hx.2 ] : ( 1 - x ) ≠ 0 ) ) ) ) using 1 ; ring_nf;
           norm_num [ hx.1.ne' ] ; ring;
         nlinarith [ hx.1, hx.2, Real.log_le_sub_one_of_pos hx.1, Real.log_le_log ( by linarith [ hx.1, hx.2 ] ) ( by linarith [ hx.1, hx.2 ] : 1 - x ≥ x ), mul_div_cancel₀ ( -1 ) ( by linarith [ hx.1, hx.2 ] : ( 1 - x ) ≠ 0 ) ];
       have := exists_deriv_eq_slope ( f := fun x => x * Real.log ( 1 / x ) + ( 1 - x ) * Real.log ( 1 / ( 1 - x ) ) ) ( show q - ζ + t / p < a + t / p by linarith ) ; norm_num at *;
@@ -755,7 +755,7 @@ lemma r3_fiber_growth_witness_safe (vSlack : ℕ → ℝ) (hvsub : Sublinear vSl
         t + θ ≤ Icard / 2 ∧ t + 1 ≤ Icard / 2 ∧
           (t : ℝ) / (Icard : ℝ) ≤ q - ζ + (vSlack Icard) / ((Icard : ℝ) * L) := by
   obtain ⟨N1, hN1⟩ : ∃ N1 : ℕ, ∀ Icard ≥ N1, vSlack Icard ≤ (L * (Q.s0 / 4) / 2) * Icard := by
-    convert hvsub.2 ( L * Q.s0 / 8 ) ( by nlinarith [ hvalid.2.2.2.1 ] ) using 1 ; ring!;
+    convert hvsub.2 ( L * Q.s0 / 8 ) ( by nlinarith [ hvalid.2.2.2.1 ] ) using 1 ; ring_nf!;
   obtain ⟨N2, hN2⟩ : ∃ N2 : ℕ, ∀ Icard ≥ N2, vSlack Icard ≤ (L * (1 / 2 - Q.qMax) / 2) * Icard := by
     have := hvsub;
     exact this.2 ( L * ( 1 / 2 - Q.qMax ) / 2 ) ( by nlinarith [ hvalid.2.2.1 ] ) |> fun ⟨ N, hN ⟩ => ⟨ N, fun Icard hIcard => hN Icard hIcard ⟩;
@@ -887,7 +887,7 @@ lemma r3_fiber_growth_safe_bound (vSlack : ℕ → ℝ) (hvsub : Sublinear vSlac
   · have hvol_bound : (k : ℝ) ≤ Real.exp (H ((t + 1 : ℝ) / Icard) * Icard + vSlack Icard) := by
       grind;
     refine' le_trans _ ( show ( ball ∅ ( t + θ ) |> Finset.card : ℝ ) ≥ Real.exp ( H ( ( t + θ : ℝ ) / Icard ) * Icard - vSlack Icard ) from _ );
-    · convert mul_le_mul_of_nonneg_left hvol_bound ( Real.exp_nonneg _ ) using 1 ; rw [ ← Real.exp_add ] ; ring;
+    · convert mul_le_mul_of_nonneg_left hvol_bound ( Real.exp_nonneg _ ) using 1 ; rw [ ← Real.exp_add ] ; ring_nf;
     · grind
 
 set_option maxHeartbeats 1000000 in
@@ -903,6 +903,7 @@ private lemma r3_fiber_growth_V_bound (hBV : BallVolumeTwoSidedStatement)
       ∀ k : ℕ, (k : ℝ) ≤ Real.exp (H (q - ζ) * (Icard : ℝ)) →
       Real.exp (H (q + (θ : ℝ) / (m : ℝ)) * (m : ℝ) - H q * (m : ℝ) + c * ζ^2 * (m : ℝ) - sV m) * (k : ℝ) ≤
         (V Icard k θ : ℝ) := by
+  refine (fun _ : InteriorVolumeCalculusStatement => ?_) hVC
   classical
   obtain ⟨L, hLpos, hchord⟩ := r3_entropy_compact_inverse_chord Q hvalid
   set vSlack := Classical.choose hBV with hvSlack_def
@@ -999,7 +1000,7 @@ private lemma r3_fiber_growth_V_bound (hBV : BallVolumeTwoSidedStatement)
             rw [← add_div, div_le_one hIpos]
             have : t + 1 ≤ Icard := by
               have := Nat.div_le_self Icard 2; omega
-            push_cast; exact_mod_cast this
+            exact_mod_cast this
           have := r3_H_shift_le (a := (t : ℝ) / (Icard : ℝ)) (δ := 1 / (Icard : ℝ))
             (by positivity) (by positivity) hle1
           rwa [← add_div] at this

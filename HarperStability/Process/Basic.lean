@@ -45,7 +45,7 @@ theorem exists_sorted_blocks (m : ℕ) (h : Fin m → ℝ) (k : ℕ) (hk : 3 * k
           use Fin.cons x σ;
           simp_all +decide [ Fin.forall_fin_succ, Function.Injective ];
           exact ⟨ fun i hi => False.elim <| hσ₂ i |>.1 <| hi.symm, fun i j hij => hσ₁ hij ⟩;
-      exact Exists.elim ( h_perm m le_rfl Finset.univ ( by simpa ) ) fun σ hσ => ⟨ σ, hσ.1, hσ.2.2 ⟩;
+      exact Exists.elim ( h_perm m le_rfl Finset.univ ( by simp ) ) fun σ hσ => ⟨ σ, hσ.1, hσ.2.2 ⟩;
     obtain ⟨ σ, hσ₁, hσ₂ ⟩ := h_sorted; exact ⟨ Equiv.ofBijective σ ⟨ hσ₁, Finite.injective_iff_surjective.mp hσ₁ ⟩, fun i j hij => by cases hij.lt_or_eq <;> aesop ⟩ ;
   refine' ⟨ Finset.image σ ( Finset.Icc ⟨ m - ( k + 1 ), by omega ⟩ ⟨ m - 1, by omega ⟩ ), _, Finset.image σ ( Finset.Icc ⟨ m - 2 * ( k + 1 ), by omega ⟩ ⟨ m - ( k + 1 ) - 1, by omega ⟩ ), _, Finset.image σ ( Finset.Icc ⟨ 0, by omega ⟩ ⟨ k, by omega ⟩ ), _, _, _ ⟩ <;> simp +decide [ Finset.card_image_of_injective _ σ.injective ];
   · omega;
@@ -88,14 +88,18 @@ theorem sortedProfile (m : ℕ)
     (((Finset.univ : Finset (Fin m)).filter
       (fun t => ε ≤ |h t - κ|)).card : ℝ) ≤
         12 * s / ε + 4 := by
+  refine (fun _ : Disjoint T M => ?_) hdTM
+  refine (fun _ : Disjoint (T ∪ M) Bt => ?_) hdB
+  refine (fun _ : (∀ t ∈ M, ∀ u, u ∉ T → u ∉ M → h u ≤ h t) => ?_) hMtop
+  refine (fun _ : (∀ t, 0 ≤ h t) => ?_) h0
   by_cases h_case : k * ε ≤ 2 * s;
   · rw [ div_add', le_div_iff₀ ] <;> try positivity;
     refine' le_trans ( mul_le_mul_of_nonneg_right ( Nat.cast_le.mpr <| Finset.card_le_univ _ ) hε.le ) _ ; norm_num ; nlinarith [ ( by norm_cast : ( 4 :ℝ ) * k ≤ m ), ( by norm_cast : ( m :ℝ ) ≤ 4 * k + 4 ), ( by norm_cast : ( 1 :ℝ ) ≤ k ) ];
   · -- In this case, we have $U.card \leq 5*s/(3*ε)$ and $D.card \leq 7*s/(3*ε)$.
     have hU_card : (Finset.univ.filter (fun t => κ + ε ≤ h t)).card ≤ 5 * s / (3 * ε) := by
       have hU_subset_T : Finset.univ.filter (fun t => κ + ε ≤ h t) ⊆ T := by
-        intro t ht; contrapose! ht; simp_all +decide [ Finset.subset_iff ] ;
-        have := Finset.sum_le_sum fun x ( hx : x ∈ T ) => hTtop x hx t ht; simp_all +decide [ Finset.sum_add_distrib ] ; nlinarith [ ( by norm_cast : ( 1 :ℝ ) ≤ k ) ] ;
+        intro t ht; contrapose! ht; simp_all +decide ;
+        have := Finset.sum_le_sum fun x ( hx : x ∈ T ) => hTtop x hx t ht; simp_all +decide ; nlinarith [ ( by norm_cast : ( 1 :ℝ ) ≤ k ) ] ;
       have hU_card : ∑ t ∈ T, (h t - κ) ≥ (Finset.univ.filter (fun t => κ + ε ≤ h t)).card * ε + (T.card - (Finset.univ.filter (fun t => κ + ε ≤ h t)).card) * (-2 * s / (3 * k)) := by
         have hU_card : ∀ t ∈ T \ Finset.univ.filter (fun t => κ + ε ≤ h t), h t - κ ≥ -2 * s / (3 * k) := by
           intros t ht
@@ -104,7 +108,7 @@ theorem sortedProfile (m : ℕ)
           have h_beta : ∑ u ∈ Finset.univ \ T, h u ≤ (m - k) * h t := by
             convert Finset.sum_le_sum fun u hu => h_beta u <| Finset.mem_sdiff.mp hu |>.2 using 1 ; norm_num [ Finset.card_sdiff, * ];
             exact Or.inl ( by rw [ Nat.cast_sub ( by linarith ) ] );
-          simp_all +decide [ Finset.card_sdiff ];
+          simp_all +decide ;
           rw [ div_le_iff₀ ] <;> nlinarith [ show ( k : ℝ ) ≥ 1 by norm_cast, show ( m : ℝ ) ≥ 4 * k by norm_cast ];
         have hU_card : ∑ t ∈ T \ Finset.univ.filter (fun t => κ + ε ≤ h t), (h t - κ) ≥ (T.card - (Finset.univ.filter (fun t => κ + ε ≤ h t)).card) * (-2 * s / (3 * k)) := by
           refine' le_trans _ ( Finset.sum_le_sum hU_card );
@@ -122,7 +126,7 @@ theorem sortedProfile (m : ℕ)
         have h_sum_Bt : ∑ t ∈ Bt, h t ≥ κ * k - 2 * s := by
           simp_all +decide [ Finset.compl_eq_univ_sdiff ];
           rw [ Nat.cast_sub ( by linarith ) ] at * ; nlinarith [ ( by norm_cast : ( 4 : ℝ ) * k ≤ m ), ( by norm_cast : ( m : ℝ ) ≤ 4 * k + 4 ) ];
-        intro t ht; contrapose! h_sum_Bt; simp_all +decide [ Finset.sum_le_sum ] ;
+        intro t ht; contrapose! h_sum_Bt; simp_all +decide ;
         exact lt_of_le_of_lt ( Finset.sum_le_sum fun x hx => hBtbot x hx t h_sum_Bt ) ( by norm_num [ hBtcard ] ; nlinarith );
       -- By definition of $D$, we know that $\sum_{t \in Bt} (\kappa - h t) \leq 2s$.
       have hD_sum : ∑ t ∈ Bt, (κ - h t) ≤ 2 * s := by
@@ -366,6 +370,7 @@ cannot increase the total entropy contribution.
 lemma negMulLog_sum_le {ι : Type*} (s : Finset ι) (p : ι → ℝ)
     (hp : ∀ i ∈ s, 0 ≤ p i) (hsum : (∑ i ∈ s, p i) ≤ 1) :
     Real.negMulLog (∑ i ∈ s, p i) ≤ ∑ i ∈ s, Real.negMulLog (p i) := by
+  refine (fun _ : (∑ i ∈ s, p i) ≤ 1 => ?_) hsum
   by_contra h_contra;
   -- Apply the definition of `Real.negMulLog` to rewrite the inequality.
   rw [Real.negMulLog_def] at h_contra;
@@ -395,6 +400,7 @@ lemma uH_le_of_dependsOnWindow {m : ℕ} {B : Type*}
     (J : Finset (Fin m)) (G : Cube m → B)
     (hG : dependsOnWindow J G) :
     uH A G ≤ uH A (proj J) := by
+  refine (fun _ : A.Nonempty => ?_) hA
   classical
   have hEq : G = (fun x => G (proj J x)) := by
     funext x
@@ -959,19 +965,17 @@ lemma sublinear_diagonalize (Sfam : ℝ → ℕ → ℝ) (c : ℝ) (hc : 0 ≤ c
       norm_num [ add_comm ]);
   · exact fun m => ⟨ by positivity, by rw [ inv_eq_one_div, div_le_div_iff₀ ] <;> linarith ⟩
 
-set_option linter.unusedVariables false in
 noncomputable def s4_pUse (p : ℝ) : ℝ :=
   min p (1 / 3)
 
-set_option linter.unusedVariables false in
 noncomputable def s4_errorBound (w : ℝ) (vFam : ℝ → ℕ → ℝ) (p : ℝ) (m : ℕ) : ℝ :=
   let pLow := p / 2
   (((vFam pLow m / p +
       2 * (m : ℝ) / p * Real.exp (-p * (m : ℝ) / 8)) * (m : ℝ)) ^
         (1 / 2 : ℝ)) / w
 
-set_option linter.unusedVariables false in
 noncomputable def s4_Sfam (w : ℝ) (sFam vFam : ℝ → ℕ → ℝ) (p : ℝ) (m : ℕ) : ℝ :=
+  let _sFam := sFam
   let p0 := s4_pUse p
   let e := s4_errorBound w vFam p0 m
   let BSize := max 1 (1 / w + 2)
@@ -1070,6 +1074,7 @@ lemma s4_Sfam_sublinear (w : ℝ) (hw : 0 < w) (sFam vFam : ℝ → ℕ → ℝ)
     (hvF : ∀ pLow : ℝ, 0 < pLow → pLow ≤ 1 / 2 → Sublinear (vFam pLow))
     (p : ℝ) (hp0 : 0 < p) (hp1 : p ≤ 1 / 2) :
     Sublinear (s4_Sfam w sFam vFam p) := by
+  refine (fun _ : (∀ pLow : ℝ, 0 < pLow → pLow ≤ 1 / 2 → Sublinear (sFam pLow)) => ?_) hsF
   have h_sublinear : Sublinear (fun m => s4_errorBound w vFam (min p (1 / 3)) m) := by
     apply s4_Sublinear_errorBound w hw vFam (min p (1 / 3)) (by
     positivity) (hvF (min p (1 / 3) / 2) (by
@@ -1125,11 +1130,11 @@ lemma uCondVar_eq_uE_fiber_sq {m : ℕ} {B : Type*} [DecidableEq B]
   by_cases hA : A = ∅ <;> simp_all +decide [ uCondVar, uE ];
   simp +decide [ Finset.sum_div _ _ _, pOn, varOn ];
   simp +decide [ uE, Finset.sum_div _ _ _, Finset.sum_filter ];
-  simp +decide [ div_eq_inv_mul, Finset.mul_sum _ _ _, mul_assoc, mul_comm, mul_left_comm, Finset.sum_mul ];
+  simp +decide [ div_eq_inv_mul, Finset.mul_sum _ _ _, mul_assoc, mul_comm, mul_left_comm ];
   rw [ Finset.sum_comm ];
   refine' Finset.sum_congr rfl fun x hx => _;
-  simp +decide [ Finset.sum_ite, Finset.filter_eq, Finset.filter_ne, hx ];
-  rw [ if_pos ⟨ x, hx, rfl ⟩ ] ; by_cases h : Finset.card ( Finset.filter ( fun y => g y = g x ) A ) = 0 <;> simp_all +decide [ mul_assoc, mul_comm, mul_left_comm ];
+  simp +decide [ Finset.sum_ite ];
+  rw [ if_pos ⟨ x, hx, rfl ⟩ ] ; by_cases h : Finset.card ( Finset.filter ( fun y => g y = g x ) A ) = 0 <;> simp_all +decide ;
   · exact False.elim ( h hx rfl );
   · convert rfl
 
@@ -1158,6 +1163,7 @@ lemma uCondVar_le_of_refines {m : ℕ} {B C : Type*} [DecidableEq B] [DecidableE
     (A : Finset (Cube m)) (f : Cube m → ℝ) (g : Cube m → B) (h : Cube m → C)
     (hA : A.Nonempty) (hgh : ∀ x y, g x = g y → h x = h y) :
     uCondVar A f g ≤ uCondVar A f h := by
+  refine (fun _ : A.Nonempty => ?_) hA
   rw [ uCondVar_eq_uE_fiber_sq, uCondVar_eq_uE_fiber_sq ];
   refine' div_le_div_of_nonneg_right ( _ : _ ≤ _ ) ( Nat.cast_nonneg A.card );
   have h_sum_sq_le : ∀ b ∈ A.image g, ∑ x ∈ A.filter (fun y => g y = b), (f x - uE (A.filter (fun y => g y = b)) f) ^ 2 ≤ ∑ x ∈ A.filter (fun y => g y = b), (f x - uE (A.filter (fun y => h y = h x)) f) ^ 2 := by
@@ -1170,9 +1176,9 @@ lemma uCondVar_le_of_refines {m : ℕ} {B C : Type*} [DecidableEq B] [DecidableE
     have h_sum_sq_le : ∀ S : Finset (Cube m), S.Nonempty → ∀ c : ℝ, ∑ x ∈ S, (f x - uE S f) ^ 2 ≤ ∑ x ∈ S, (f x - c) ^ 2 := by
       intro S hS c
       have h_sum_sq_le : ∑ x ∈ S, (f x - uE S f) ^ 2 = ∑ x ∈ S, (f x - c) ^ 2 - S.card * (uE S f - c) ^ 2 := by
-        unfold uE; ring;
-        simp +decide [ Finset.sum_add_distrib, Finset.mul_sum _ _ _, Finset.sum_mul _ _ _, sq, mul_assoc, mul_comm, mul_left_comm, hS.ne_empty ] ; ring;
-        simp +decide [ ← Finset.mul_sum _ _ _, ← Finset.sum_mul, mul_assoc, mul_comm, mul_left_comm, hS.ne_empty ] ; ring;
+        unfold uE; ring_nf;
+        simp +decide [ Finset.sum_add_distrib, Finset.mul_sum _ _ _, Finset.sum_mul _ _ _, sq, mul_assoc, mul_comm, mul_left_comm, hS.ne_empty ] ; ring_nf;
+        simp +decide [ ← Finset.mul_sum _ _ _, ← Finset.sum_mul, mul_assoc, mul_comm, mul_left_comm ] ; ring;
       exact h_sum_sq_le ▸ sub_le_self _ ( mul_nonneg ( Nat.cast_nonneg _ ) ( sq_nonneg _ ) );
     convert h_sum_sq_le ( A.filter ( fun y => g y = b ) ) _ ( uE ( A.filter ( fun y => h y = h ( Classical.choose ( Finset.mem_image.mp hb ) ) ) ) f ) using 1;
     · exact Finset.sum_congr rfl fun x hx => by rw [ h_const x hx ] ;
@@ -1278,7 +1284,7 @@ lemma offset_floor_bad_integral (a b w : ℝ) (hw : 0 < w) :
   rw [ MeasureTheory.integral_sub, MeasureTheory.integral_sub ] at h_suff;
   · rw [ MeasureTheory.integral_sub ] at h_suff;
     · simp_all +decide [ sub_div ];
-      convert h_suff using 1 ; norm_num [ ← MeasureTheory.integral_Icc_eq_integral_Ico, MeasureTheory.integral_Icc_eq_integral_Ioc, ← intervalIntegral.integral_of_le hw.le ] ; ring;
+      convert h_suff using 1 ; norm_num [ ← MeasureTheory.integral_Icc_eq_integral_Ico, MeasureTheory.integral_Icc_eq_integral_Ioc, ← intervalIntegral.integral_of_le hw.le ] ; ring_nf;
       norm_num [ hw.ne' ];
     · exact ( by have := h_fract_integral a; exact ( by contrapose! this; rw [ MeasureTheory.integral_undef this ] ; linarith ) );
     · exact ( by have := h_fract_integral b; exact ( by contrapose! this; rw [ MeasureTheory.integral_undef this ] ; linarith ) );
@@ -1299,6 +1305,8 @@ lemma windowProb_reindex_le (m : ℕ) (p : ℝ) (hp0 : 0 < p) (hp1 : p < 1)
     (hφnn : ∀ J t, 0 ≤ φ J t) :
     (∑ J : Finset (Fin m), windowProb J p * ∑ t : Fin m, φ J t)
       ≤ (1 / p) * ∑ J : Finset (Fin m), windowProb J p * ∑ t ∈ J, φ J t := by
+  refine (fun _ : p < 1 => ?_) hp1
+  refine (fun _ : (∀ J t, 0 ≤ φ J t) => ?_) hφnn
   -- Apply the reindexing step to the sum over $J$ where $t \notin J$.
   have h_reindex_step : ∀ t : Fin m, ∑ J ∈ Finset.univ.filter (fun J => t ∉ J), windowProb J p * φ J t = ∑ J ∈ Finset.univ.filter (fun J => t ∈ J), windowProb J p * ((1 - p) / p) * φ J t := by
     intro t
@@ -1307,15 +1315,15 @@ lemma windowProb_reindex_le (m : ℕ) (p : ℝ) (hp0 : 0 < p) (hp1 : p < 1)
     · simp +contextual [ Finset.ext_iff ];
       grind;
     · exact fun J hJ => ⟨ J.erase t, by aesop ⟩;
-    · intro J hJ; rw [ hφ J t ( by simpa using hJ ) ] ; simp +decide [ windowProb, Finset.card_insert_of_notMem ( by simpa using hJ ) ] ; ring;
+    · intro J hJ; rw [ hφ J t ( by simpa using hJ ) ] ; simp +decide [ windowProb, Finset.card_insert_of_notMem ( by simpa using hJ ) ] ; ring_nf;
       field_simp;
-      exact Or.inl ( by rw [ ← pow_succ', show m - J.card = m - ( 1 + J.card ) + 1 by exact Nat.sub_eq_of_eq_add <| by linarith [ Nat.sub_add_cancel <| show 1 + J.card ≤ m from by linarith [ show J.card < m from lt_of_lt_of_le ( Finset.card_lt_card <| Finset.ssubset_iff_subset_ne.mpr ⟨ Finset.subset_univ J, by aesop_cat ⟩ ) ( by simpa ) ] ] ] );
+      exact Or.inl ( by rw [ ← pow_succ', show m - J.card = m - ( 1 + J.card ) + 1 by exact Nat.sub_eq_of_eq_add <| by linarith [ Nat.sub_add_cancel <| show 1 + J.card ≤ m from by linarith [ show J.card < m from lt_of_lt_of_le ( Finset.card_lt_card <| Finset.ssubset_iff_subset_ne.mpr ⟨ Finset.subset_univ J, by aesop_cat ⟩ ) ( by simp ) ] ] ] );
   -- Apply the reindexing step to each term in the sum over $t$.
   have h_sum_reindex : ∑ J, windowProb J p * ∑ t, φ J t = ∑ t : Fin m, ∑ J ∈ Finset.univ.filter (fun J => t ∈ J), windowProb J p * φ J t + ∑ t : Fin m, ∑ J ∈ Finset.univ.filter (fun J => t ∉ J), windowProb J p * φ J t := by
     simp +decide only [Finset.mul_sum _ _ _, ← Finset.sum_add_distrib];
     rw [ Finset.sum_comm, Finset.sum_congr rfl ] ; intros ; rw [ Finset.sum_filter_add_sum_filter_not ];
-  simp_all +decide [ ← Finset.mul_sum _ _ _, ← Finset.sum_mul, mul_assoc, mul_comm, mul_left_comm, ne_of_gt hp0 ];
-  simp +decide [ ← mul_assoc, ← Finset.sum_mul _ _ _, ← Finset.mul_sum, ← Finset.sum_comm, h_reindex_step ];
+  simp_all +decide [mul_comm];
+  simp +decide [← mul_assoc, ← Finset.sum_mul _ _ _];
   rw [ show ( ∑ x : Finset ( Fin m ), ( ∑ t ∈ x, φ x t ) * windowProb x p ) = ∑ t : Fin m, ∑ x with t ∈ x, φ x t * windowProb x p from ?_ ];
   · field_simp;
     norm_num;
@@ -1335,7 +1343,7 @@ lemma exists_offset_le_of_setIntegral_le (w C : ℝ) (hw : 0 < w) (f : ℝ → �
   have h_int_pos : 0 < ∫ o in Set.Ico 0 w, (f o - C) := by
     rw [ MeasureTheory.integral_pos_iff_support_of_nonneg_ae ];
     · simp +zetaDelta at *;
-      exact lt_of_lt_of_le ( by simpa [ hw ] ) ( MeasureTheory.measure_mono ( show Set.Ico 0 w ⊆ ( Function.support fun o => f o - C ) ∩ Set.Ico 0 w from fun x hx => ⟨ ne_of_gt ( sub_pos.mpr ( h_contra x hx.1 hx.2 ) ), hx ⟩ ) );
+      exact lt_of_lt_of_le ( by simp [ hw ] ) ( MeasureTheory.measure_mono ( show Set.Ico 0 w ⊆ ( Function.support fun o => f o - C ) ∩ Set.Ico 0 w from fun x hx => ⟨ ne_of_gt ( sub_pos.mpr ( h_contra x hx.1 hx.2 ) ), hx ⟩ ) );
     · filter_upwards [ MeasureTheory.ae_restrict_mem measurableSet_Ico ] with o ho using sub_nonneg_of_le <| le_of_lt <| h_contra o ho.1 ho.2;
     · exact hf.sub ( MeasureTheory.integrable_const C );
   rw [ MeasureTheory.integral_sub hf ] at h_int_pos <;> norm_num at *;
@@ -1387,9 +1395,9 @@ lemma s4_avg_variance_bound (m : ℕ) (A : Finset (Cube m)) (p : ℝ)
             exact le_trans ( div_le_div_of_nonneg_right ( Finset.sum_le_sum fun _ _ => h_var_le_one _ ) ( Nat.cast_nonneg _ ) ) ( by norm_num [ hA.ne_empty ] );
           exact h_var_le_one _ fun x => ⟨ rho_nonneg _ _ _, rho_le_one _ _ _ ⟩;
         · refine' le_trans ( Finset.sum_le_sum fun J hJ => mul_le_mul_of_nonneg_left ( show ( ∑ i ∈ J, 1 : ℝ ) ≤ m by simpa using Finset.card_le_univ J ) ( windowProb_nonneg J p ( by positivity ) ( by linarith ) ) ) _;
-          convert mul_le_mul_of_nonneg_left ( windowProb_tail_bound m p hp0 ( by linarith ) ) ( Nat.cast_nonneg m ) using 1 ; ring;
+          convert mul_le_mul_of_nonneg_left ( windowProb_tail_bound m p hp0 ( by linarith ) ) ( Nat.cast_nonneg m ) using 1 ; ring_nf;
           rw [ Finset.mul_sum _ _ _ ];
-      convert mul_le_mul_of_nonneg_left ( add_le_add h_range h_complement ) ( one_div_nonneg.mpr hp0.le ) using 1 ; ring;
+      convert mul_le_mul_of_nonneg_left ( add_le_add h_range h_complement ) ( one_div_nonneg.mpr hp0.le ) using 1 ; ring_nf;
       · rw [ ← mul_add, Finset.sum_filter_add_sum_filter_not ];
       · ring
 
@@ -1534,8 +1542,8 @@ lemma s4_integral_error_bound (m : ℕ) (A : Finset (Cube m)) (w p : ℝ)
   rw [ ← Real.sqrt_mul' ];
   · refine Real.sqrt_le_sqrt ?_;
     convert mul_le_mul_of_nonneg_right ( s4_avg_variance_bound m A p hp0 ( by linarith ) hA V hV hvar ) ( Nat.cast_nonneg m ) using 1;
-    · simp +decide only [mul_comm, Finset.mul_sum _ _ _, mul_left_comm, mul_assoc];
-    · ring;
+    · simp +decide only [mul_comm, Finset.mul_sum _ _ _, mul_left_comm];
+    · ring_nf;
   · positivity
 
 lemma s4_canonicalEstimator_expectedError (m : ℕ) (A : Finset (Cube m)) (w p : ℝ)

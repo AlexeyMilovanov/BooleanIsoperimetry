@@ -820,6 +820,7 @@ lemma s4_error_base_arith (KV E2 E3 E4 mm base : ℝ)
     (hgeo3 : (E3 + 1) * (mm + 1) ≤ (E4 + 1) ^ 2)
     (hbase : base ≤ (2 * KV * (E2 + 1) + 16) * ((mm + 1) / (E3 + 1) + 13) * mm) :
     base ≤ (28 * KV + 224) * (E4 + 1) ^ 2 := by
+  refine (fun _ : E3 ≤ E4 => ?_) hE34
   refine le_trans hbase ?_;
   rw [ div_add', mul_div, div_mul_eq_mul_div, div_le_iff₀ ] <;> try nlinarith;
   have h_expand : (2 * KV * (E2 + 1) + 16) * (mm + 1 + 13 * (E3 + 1)) * mm ≤ (2 * KV * (E2 + 1) + 16) * (mm + 1) * (13 * (E3 + 1) + mm) := by
@@ -899,7 +900,7 @@ lemma s4_eff_error_grade4 (Q : QData) (hQ : validQData Q) (K_V : ℝ) (hKV : 1 �
   -- By `s4_rpow_half_le_sqrt_of_le`, we have `base^(1/2:ℝ) ≤ Real.sqrt ((28*K_V+224)*(E4+1)^2)`.
   have hbase_sqrt : base ^ (1 / 2 : ℝ) ≤ Real.sqrt ((28 * K_V + 224) * (E4 + 1) ^ 2) := by
     rw [ ← Real.sqrt_eq_rpow ] ; exact Real.sqrt_le_sqrt hbase;
-  convert div_le_div_of_nonneg_right hbase_sqrt hw.le using 1 ; norm_num [ Real.sqrt_mul ( show 0 ≤ 28 * K_V + 224 by positivity ), Real.sqrt_sq ( show 0 ≤ E4 + 1 by positivity ) ] ; ring!;
+  convert div_le_div_of_nonneg_right hbase_sqrt hw.le using 1 ; norm_num [ Real.sqrt_mul ( show 0 ≤ 28 * K_V + 224 by positivity ), Real.sqrt_sq ( show 0 ≤ E4 + 1 by positivity ) ] ; ring_nf!;
   rw [ max_eq_right ( Real.le_sqrt_of_sq_le ( by linarith ) ) ] ; ring!;
 
 /-
@@ -1265,6 +1266,7 @@ lemma s4_log_le_eightroot (x : ℝ) (hx : 1 ≤ x) :
 /-- Square comparison. -/
 lemma s4_le_of_sq_le {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (h : a ^ 2 ≤ b ^ 2) :
     a ≤ b := by
+  refine (fun _ : 0 ≤ a => ?_) ha
   nlinarith [sq_nonneg (a - b), sq_nonneg (a + b)]
 
 /-- Fourth-power comparison. -/
@@ -1280,6 +1282,7 @@ lemma s4_le_of_pow4_le {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (h : a ^ 4 ≤ 
 set_option maxHeartbeats 800000 in
 /-- Exponential tail: `y·e^{-y/8} ≤ 3`. -/
 lemma s4_texp_le (y : ℝ) (hy : 0 ≤ y) : y * Real.exp (-(y / 8)) ≤ 3 := by
+  refine (fun _ : 0 ≤ y => ?_) hy
   have h1 : y / 8 ≤ Real.exp (y / 8 - 1) := by
     linarith [Real.add_one_le_exp (y / 8 - 1)]
   have h2 : Real.exp (y / 8 - 1) * Real.exp (-(y / 8)) = Real.exp (-1 : ℝ) := by
@@ -1521,6 +1524,9 @@ lemma s4_error_core (K_V E2 E3 E4 R Q2 Q4 ip mR X : ℝ)
     (hmQ2 : mR * Q2 ≤ (E4 + 1) ^ 2)
     (hX : X ≤ 2 * K_V * (E2 + 1) * ip ^ 2 + K_V * (E3 + 1) * ip + 6 * ip ^ 2) :
     X * mR ≤ 83 * K_V * ((E4 + 1) + R) ^ 2 := by
+  refine (fun _ : 0 ≤ Q2 => ?_) hQ20
+  refine (fun _ : 0 ≤ Q4 => ?_) hQ40
+  refine (fun _ : 0 < ip => ?_) hip0
   have hKV0 : (0 : ℝ) ≤ K_V := by linarith
   have t1 : (E2 + 1) * ip ^ 2 * mR ≤ 10 * (E4 + 1) ^ 2 := by
     have a1 := mul_le_mul_of_nonneg_left hip2_le
@@ -1556,6 +1562,7 @@ lemma s4_eff_error_twoterm (Q : QData) (hQ : validQData Q)
           (K_err / eps) * ((effEnv 4 Q.sigma m + 1) +
             Real.sqrt (Real.sqrt (Real.sqrt
               ((effEnv 3 Q.sigma m + 1) ^ 3 * ((m : ℝ) + 1) ^ 5)))) := by
+  refine (fun _ : validQData Q => ?_) hQ
   refine ⟨4 * Real.sqrt (83 * K_V), ?_, ?_⟩
   · have h81 : (81 : ℝ) ≤ 83 * K_V := by nlinarith
     have h9 : (9 : ℝ) ≤ Real.sqrt (83 * K_V) := by
@@ -2493,7 +2500,7 @@ lemma s4_rate_gap_certificate_v2 (Q : QData) (hQ : validQData Q)
       have hcoef : (512:ℝ) / eps ^ 4 + (768 * K_err + 3840) / eps ^ 4
           + 256 * K_err / eps ^ 4 + 6144 / eps ^ 4
           ≤ (1024 * K_err + 16384) / eps ^ 4 := by
-        rw [div_add_div_same, div_add_div_same, div_add_div_same]
+        rw [←add_div, ←add_div, ←add_div]
         exact (div_le_div_iff_of_pos_right heps4).mpr (by linarith)
       have hprod := mul_le_mul_of_nonneg_right hcoef hE51
       nlinarith [hprod]

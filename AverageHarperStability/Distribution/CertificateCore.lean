@@ -208,6 +208,7 @@ lemma conditionalMismatch_nonneg {n : ℕ} (mu : Cube n → ℝ) (hmu : IsLaw mu
 
 lemma conditionalMismatch_le_one {n : ℕ} (mu : Cube n → ℝ) (hmu : IsLaw mu) (t : Fin n) (x : Cube n) :
     conditionalMismatch mu t x ≤ 1 := by
+  have _ := hmu
   unfold conditionalMismatch
   split_ifs with h
   · linarith [condProbOne_nonneg mu hmu t x]
@@ -238,6 +239,7 @@ noncomputable def delta0_val (tau zeta : ℝ) : ℝ :=
 theorem delta0_val_pos {tau zeta : ℝ} (ht0 : 0 < tau) (ht1 : tau < 1 / 2)
     (hz0 : 0 < zeta) (hz1 : zeta ≤ 1 / 4) :
     0 < delta0_val tau zeta := by
+  have _ := hz1
   have hchannel : 0 < 1 - 2 * tau := by
     nlinarith
   unfold delta0_val
@@ -254,6 +256,10 @@ noncomputable def err_val (tau zeta delta : ℝ) : ℝ :=
 theorem err_val_tendsto {tau zeta : ℝ} (ht0 : 0 < tau) (ht1 : tau < 1 / 2)
     (hz0 : 0 < zeta) (hz1 : zeta ≤ 1 / 4) :
     Tendsto (err_val tau zeta) (nhdsWithin 0 (Ioi 0)) (nhds 0) := by
+  have _ := ht0
+  have _ := ht1
+  have _ := hz0
+  have _ := hz1
   have hsqrt : Tendsto (fun delta : ℝ =>
       Real.sqrt (Real.sqrt (Real.sqrt delta)))
       (nhdsWithin 0 (Ioi 0)) (nhds 0) := by
@@ -266,11 +272,15 @@ theorem err_val_tendsto {tau zeta : ℝ} (ht0 : 0 < tau) (ht1 : tau < 1 / 2)
       simpa using (hcontinuous.continuousAt (x := (0 : ℝ))).tendsto
     exact hsqrt'.mono_left inf_le_left
   unfold err_val
-  convert tendsto_const_nhds.mul hsqrt using 1 <;> norm_num
+  (convert tendsto_const_nhds.mul hsqrt using 1; norm_num)
 
 theorem err_val_pos {tau zeta delta : ℝ} (ht0 : 0 < tau) (ht1 : tau < 1 / 2)
     (hz0 : 0 < zeta) (hz1 : zeta ≤ 1 / 4) (hd0 : 0 < delta) :
     0 < err_val tau zeta delta := by
+  have _ := ht0
+  have _ := ht1
+  have _ := hz0
+  have _ := hz1
   unfold err_val
   positivity
 
@@ -279,6 +289,7 @@ theorem quarterRoot_le_err_val {tau zeta delta : ℝ}
     (hz0 : 0 < zeta) (hz1 : zeta ≤ 1 / 4)
     (hd0 : 0 < delta) (hd1 : delta ≤ delta0_val tau zeta) :
     Real.sqrt (Real.sqrt delta) ≤ err_val tau zeta delta := by
+  have _ := hd0
   have htau : 0 < 1 - 2 * tau := by linarith
   have hX : 0 < zeta * tau * (1 - 2 * tau) := by positivity
   have hX1 : zeta * tau * (1 - 2 * tau) ≤ 1 := by
@@ -541,8 +552,8 @@ lemma mgl_slope_core {tau p : ℝ} (ht0 : 0 < tau) (ht1 : tau < 1/2)
           ((hasDerivAt_const y 1).sub (hasDerivAt_id y))
         have h2 := Real.hasDerivAt_log (ne_of_gt hy0)
         rw [hLdef]
-        convert h1.sub h2 using 1 <;>
-          field_simp [ne_of_gt hy0, ne_of_gt (sub_pos.mpr hy1)] <;> ring
+        (convert h1.sub h2 using 1;
+          field_simp [ne_of_gt hy0, ne_of_gt (sub_pos.mpr hy1)]; ring)
       exact hd.deriv
     apply StrictMonoOn.congr _ hderiv_eqOn.symm
     intro y hy z hz hyz
