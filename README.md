@@ -1,17 +1,21 @@
-# Harper stability formalizations
+# Harper and average-Harper stability formalizations
 
-A complete Lean 4 / Mathlib formalization of a **stability version of Harper's
-vertex-isoperimetric inequality** on the Hamming cube: if a set has a
-near-minimal boundary, then all but an `ε`-fraction of it is covered by few
-Hamming balls of near-optimal radius.
+This repository contains two complete Lean 4 / Mathlib developments on the
+Hamming cube:
 
-The repository also contains `AverageHarperStability`, a complete formalization
-of the **combinatorial/set form of average-Harper stability**: a finite set
-whose noisy entropy is nearly MGL-minimal is covered, up to vanishing relative
-mass, by exponentially few Hamming balls of asymptotically optimal radius.
+- `HarperStability`: a **stability version of Harper's vertex-isoperimetric
+  inequality**. If a set has near-minimal boundary, then all but an
+  `ε`-fraction of it is covered by few Hamming balls of near-optimal radius.
+- `AverageHarperStability`: the **combinatorial/set form of average-Harper
+  stability**. A finite set whose noisy entropy is nearly MGL-minimal is
+  covered, up to vanishing relative mass, by exponentially few Hamming balls
+  of asymptotically optimal radius.
 
 **Status: fully proved. Zero `sorry`.** The main theorems depend only on the
 standard axioms `[propext, Classical.choice, Quot.sound]`.
+
+Six interface files contain the frozen trusted statements and definitions;
+their hashes are recorded in `.interface.sha256` and checked by the audit.
 
 ## Reviewing the result
 
@@ -36,7 +40,20 @@ theorem AverageHarperStability.average_harper_set_stability :
 It is the minimizer/set side only. Kolmogorov complexity and the separate
 online-enumeration Step 6 are deliberately outside this theorem's scope.
 
-## The three theorems
+The proof is exposed through three independently reviewable entry points:
+
+```text
+distribution_average_harper_stability
+  → entropy_labels_to_cover
+  → average_harper_set_stability
+```
+
+They implement, respectively, distribution-level stability, the
+entropy-labels-to-cover bridge, and the final set theorem. Their contracts are
+the frozen `DistributionStabilityStatement`,
+`EntropyLabelsToCoverStatement`, and `AverageHarperSetStabilityStatement`.
+
+## Harper-stability variants
 
 The same theorem is proved at three levels of precision, connected by
 machine-checked consistency bridges:
@@ -90,6 +107,11 @@ lake build HarperStability AverageHarperStability
 The audit checks both libraries' import boundaries and frozen interface hashes,
 and verifies that no `sorry`, `axiom`, `admit`, `unsafe`, or heartbeat-disabling
 option remains.
+
+The only known build diagnostics are three linter warnings in the frozen
+`HarperStability/Interface/Effective.lean` statement layer. They are retained
+to keep the reviewed interface hash unchanged; all non-frozen modules build
+without warnings.
 
 ## Verify the axioms directly
 
