@@ -2,7 +2,7 @@
 
 This document isolates the **statement** of the main theorem and every
 definition it transitively depends on, so that a reviewer can decide whether
-the Lean formalization says what it should — **without reading any proof**.
+the Lean formalization says what it should.
 
 ## Why this is enough
 
