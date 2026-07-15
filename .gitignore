@@ -1,4 +1,7 @@
 *.c
+__pycache__/
+*.py[cod]
+*.py.bak_*
 /.DS_Store
 *.ilean
 /interface_part_reviews/
@@ -8,6 +11,7 @@
 *.olean
 *.prof
 /proof_loop_runs/
+/proof_loop_readiness/
 /reviews/
 *.so
 *.trace
