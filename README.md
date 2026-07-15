@@ -23,10 +23,10 @@ The accompanying paper proof is available as
 **[Robust Harper Stability at the Exponential Scale](docs/robust-harper-stability-at-the-exponential-scale.pdf)**.
 
 If you only care about *what is proved* (not the proof or the constants), read
-**[`docs/STATEMENT.md`](docs/STATEMENT.md)**. It isolates the main theorem and
-every definition it depends on (~15 short definitions), gives a plain-English
-statement, and shows the `#print axioms` output. That document is the entire
-human-trusted surface.
+**[`docs/STABILITY_HARPER_STATEMENT.md`](docs/STABILITY_HARPER_STATEMENT.md)**.
+It isolates the main theorem and every definition it depends on, gives a
+plain-English statement, and shows the `#print axioms` output. That document is
+the entire human-trusted surface.
 
 For the average-Harper theorem, see
 **[`docs/AVERAGE_HARPER_STATEMENT.md`](docs/AVERAGE_HARPER_STATEMENT.md)**.

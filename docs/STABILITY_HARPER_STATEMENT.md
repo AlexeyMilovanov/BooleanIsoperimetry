@@ -11,7 +11,7 @@ are:
 
 1. the Lean kernel and the three standard axioms
    `propext, Classical.choice, Quot.sound` (used throughout Mathlib), and
-2. that the **statement below**, together with the ~15 short definitions it
+2. that the **statement below**, together with the short definitions it
    unfolds to, faithfully expresses the intended theorem.
 
 There are no other axioms and no `sorry`:
@@ -211,6 +211,22 @@ def degradedData (Din Dout : StabilityData) : Prop :=
 may only enlarge `cSize`, and supplies an output slack `Dout.sigma ≥ Din.sigma`
 that is **still `Sublinear`** (forced by `validData Dout`). That sublinear
 `Dout.sigma` is exactly the `σ_out = o(n)` of the plain statement.
+
+---
+
+## Semantic points that are easy to miss
+
+- The existential `Dout` is chosen before the variables quantified in
+  `CoverFor`. Thus one sublinear output slack works simultaneously for every
+  `n, r, S, alpha, beta` in the class.
+- When `k = S.card`, the fallback branches in `V` and `rmin` are never used:
+  `S` is admissible in the definition of `V`, and a radius-`n` ball is the
+  whole cube.
+- `coveredByBalls` is a filter of `S`, so its cardinality is at most `S.card`;
+  the natural-number subtraction in the uncovered count is therefore exact.
+- Lean uses natural logarithms. A base-2 formulation is obtained by rescaling
+  the slack by `log 2`; this preserves sublinearity, and the harmless ceiling
+  can be absorbed into the class-only constant in the uniform theorem.
 
 ---
 

@@ -12,7 +12,8 @@ If the top-level shape of any statement ever changes, the corresponding
 Together with the frozen `.interface.sha256` — which pins the inner definitions
 (`validData`, `degradedData`, `CoverFor`, `classMember`, `effDegrade`, …) — and
 the `#print axioms` audit (`scripts/audit_axioms.lean`), this pins the entire
-human-trusted surface. Plain-English walkthrough: `docs/STATEMENT.md`.
+human-trusted surface. Plain-English walkthrough:
+`docs/STABILITY_HARPER_STATEMENT.md`.
 
 `effMainGrade` is spelled out as the literal `14` on purpose: if the certified
 grade ever changes, these guards fail loudly.
