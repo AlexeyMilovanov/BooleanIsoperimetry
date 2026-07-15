@@ -29,6 +29,19 @@ namespace HarperStability
 
 attribute [local instance] Classical.propDecidable
 
+/-!
+The full project interface first elaborates the real numeral `2` inside
+`predictableCenter`.  Lean gives the resulting (trivial) `AtLeastTwo`
+certificate the generated name below and reuses it in later declarations.
+The standalone challenge names the same certificate explicitly so that the
+trusted definitions have exactly the same elaborated terms, independently of
+the omitted proof-internal definitions.
+-/
+theorem predictableCenter._proof_1 : Nat.AtLeastTwo (1 + 1) :=
+  Nat.instAtLeastTwoHAddOfNat 1
+
+attribute [local instance] predictableCenter._proof_1
+
 noncomputable def ball {n : ℕ} (a : Cube n) (r : ℕ) : Finset (Cube n) :=
   Finset.univ.filter fun y => hDist y a ≤ r
 
