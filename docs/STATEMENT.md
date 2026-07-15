@@ -49,6 +49,20 @@ count `exp(σ_out(n))` is subexponential and the radius excess `⌈σ_out(n)⌉`
 the explicit envelope `K·(effEnv 14 σ n + 1) ≈ K·σ^(1/16384)·n^(16383/16384)`
 (and, for the uniform one, make `K` depend only on the class reals, not on `σ`).
 
+## Where the checked theorem lives
+
+The checked declaration and its proof term,
+[`HarperStability.main_finite_skeleton`](../HarperStability/Assembly/Basic.lean),
+are in `HarperStability/Assembly/Basic.lean`.  Its proposition
+[`MainFiniteStatement`](../HarperStability/Interface/Statements.lean) is
+defined in `HarperStability/Interface/Statements.lean`.
+
+The public guard in
+[`HarperStability/Statement.lean`](../HarperStability/Statement.lean)
+restates the theorem's full outer type without hiding it behind the
+`MainFiniteStatement` abbreviation.  The root module `HarperStability.lean`
+imports this guard, so `lake build HarperStability` checks it.
+
 ## The theorem, verbatim
 
 ```lean
