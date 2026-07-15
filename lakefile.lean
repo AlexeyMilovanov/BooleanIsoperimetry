@@ -9,3 +9,9 @@ require BooleanIsoperimetry from git
 lean_lib «HarperStability» where
 
 lean_lib «AverageHarperStability» where
+
+-- Standalone modules used by leanprover/comparator.  `Challenge` imports only
+-- Mathlib; `Solution` connects the trusted statement to the checked theorem.
+lean_lib «Challenge» where
+
+lean_lib «Solution» where

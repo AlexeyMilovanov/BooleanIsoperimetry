@@ -14,10 +14,14 @@ are:
 2. that the **statement below**, together with the short definitions it
    unfolds to, faithfully expresses the intended theorem.
 
-There are no other axioms and no `sorry`:
+The proved project modules contain no `sorry`, and the headline theorem uses no
+other axioms:
 
 ```
-$ lake env lean -c '#print axioms HarperStability.main_finite_skeleton'
+$ lake env lean --stdin <<'EOF'
+import HarperStability.Assembly.Basic
+#print axioms HarperStability.main_finite_skeleton
+EOF
 'HarperStability.main_finite_skeleton' depends on axioms:
   [propext, Classical.choice, Quot.sound]
 ```
@@ -62,6 +66,27 @@ The public guard in
 restates the theorem's full outer type without hiding it behind the
 `MainFiniteStatement` abbreviation.  The root module `HarperStability.lean`
 imports this guard, so `lake build HarperStability` checks it.
+
+## Mechanical statement-to-proof check
+
+For an adversarial audit, read [`Challenge.lean`](../Challenge.lean).  It
+imports only Mathlib and repeats the full statement together with every custom
+definition used by its type.  The one `sorry` in that file is intentional: it
+marks the proof to be supplied, not a hole in the formalization.
+
+[`Solution.lean`](../Solution.lean) supplies that proof by pointing directly to
+`HarperStability.main_finite_skeleton`.  The
+[`Comparator configuration`](../comparator/config.json) and hardened
+[`Comparator workflow`](../.github/workflows/comparator.yml) mechanically
+check that the two theorem statements — including all transitively used custom
+definitions — agree exactly, that the proof is accepted by the Lean kernel,
+and that it uses only `propext`, `Classical.choice`, and `Quot.sound`.
+
+Thus a skeptical reviewer has two distinct tasks: decide that the small
+Mathlib-only `Challenge.lean` expresses the intended mathematics while also
+checking the short Lake configuration and pinned dependencies, and reproduce
+the Comparator job.  Reviewing thousands of internal proof declarations is
+not required.
 
 ## The theorem, verbatim
 
@@ -250,8 +275,8 @@ that is **still `Sublinear`** (forced by `validData Dout`). That sublinear
 
 ```bash
 export PATH="$HOME/.elan/bin:$PATH"
-lake build
-lake env lean <<'EOF'
+lake build HarperStability
+lake env lean --stdin <<'EOF'
 import HarperStability.Assembly
 #print axioms HarperStability.main_finite_skeleton
 #print axioms HarperStability.main_finite_effective_uniform

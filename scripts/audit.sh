@@ -4,12 +4,19 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 echo "== escape hatch grep =="
+# Challenge.lean is audited separately by the Comparator workflow: its single
+# `sorry` is the intentional statement hole, not part of the proved libraries.
 if grep -RInE --include='*.lean' '\b(axiom|admit|unsafe|implemented_by|native_decide)\b|set_option maxHeartbeats 0' HarperStability AverageHarperStability *.lean 2>/dev/null; then
   echo "ERROR: hard escape hatch found"
   exit 1
 fi
 
-if grep -RInE --include='*.lean' '\bsorry\b' HarperStability AverageHarperStability *.lean 2>/dev/null; then
+sorry_matches="$(
+  grep -RInE --include='*.lean' '\bsorry\b' HarperStability AverageHarperStability *.lean 2>/dev/null \
+    | grep -vE '^Challenge\.lean:' || true
+)"
+if [[ -n "$sorry_matches" ]]; then
+  printf '%s\n' "$sorry_matches"
   if [[ "${STRICT_NO_SORRY:-0}" == "1" ]]; then
     echo "ERROR: sorry found in strict proof-stage mode"
     exit 1

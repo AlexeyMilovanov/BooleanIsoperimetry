@@ -22,11 +22,16 @@ their hashes are recorded in `.interface.sha256` and checked by the audit.
 The accompanying paper proof is available as
 **[Robust Harper Stability at the Exponential Scale](docs/robust-harper-stability-at-the-exponential-scale.pdf)**.
 
-If you only care about *what is proved* (not the proof or the constants), read
-**[`docs/STABILITY_HARPER_STATEMENT.md`](docs/STABILITY_HARPER_STATEMENT.md)**.
-It isolates the main theorem and every definition it depends on, gives a
-plain-English statement, and shows the `#print axioms` output. That document is
-the entire human-trusted surface.
+If you only care about *what is proved* (not the proof or the constants), start
+with **[`docs/STABILITY_HARPER_STATEMENT.md`](docs/STABILITY_HARPER_STATEMENT.md)**.
+It explains the main theorem and every definition it depends on.  The core
+executable statement surface is **[`Challenge.lean`](Challenge.lean)**: it
+imports only Mathlib and is checked against the proved theorem by
+[`leanprover/comparator`](https://github.com/leanprover/comparator).  See the
+**[Comparator certificate](comparator/README.md)** and the transparent project
+metadata in **[`formalization.yaml`](formalization.yaml)**.  Comparator's trust
+base also includes the small Lake configuration, the dependency lockfile, and
+the pinned checking tools described by the certificate.
 
 For the average-Harper theorem, see
 **[`docs/AVERAGE_HARPER_STATEMENT.md`](docs/AVERAGE_HARPER_STATEMENT.md)**.
@@ -88,6 +93,9 @@ Bridges: `main_finite_via_effective` (effective ⟹ coarse) and
   probability, MGL, flatness, tracking and Wyner--Ziv components.
 - `AverageHarperStability.Sets` / `.Assembly`: the entropy-to-cover bridge and
   the final combinatorial theorem.
+- `Challenge.lean`, `Solution.lean`, and `comparator/config.json`: the
+  Mathlib-only trusted statement and its machine-checked bridge to
+  `HarperStability.main_finite_skeleton`.
 
 The external Harper theorem dependency is
 [`AlexeyMilovanov/BooleanIsoperimetry`](https://github.com/AlexeyMilovanov/BooleanIsoperimetry),
@@ -109,7 +117,9 @@ lake build HarperStability AverageHarperStability
 
 The audit checks both libraries' import boundaries and frozen interface hashes,
 and verifies that no `sorry`, `axiom`, `admit`, `unsafe`, or heartbeat-disabling
-option remains.
+option remains in the proved formalization.  The separate `Challenge.lean`
+contains one intentional `sorry`: it is the statement hole that Comparator
+requires, not part of the proof.
 
 The only known build diagnostics are three linter warnings in the frozen
 `HarperStability/Interface/Effective.lean` statement layer. They are retained
@@ -119,7 +129,7 @@ without warnings.
 ## Verify the axioms directly
 
 ```bash
-lake env lean <<'EOF'
+lake env lean --stdin <<'EOF'
 import HarperStability.Assembly
 import AverageHarperStability
 #print axioms HarperStability.main_finite_skeleton

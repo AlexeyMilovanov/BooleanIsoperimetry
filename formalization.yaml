@@ -1,0 +1,143 @@
+# Self-reporting metadata following
+# https://github.com/mathlib-initiative/formalization.yaml (v0.3).
+version: "v0.3"
+
+project:
+  name: "Robust Harper Stability at the Exponential Scale (Lean 4 / Mathlib)"
+  authors:
+    - "Alexey Milovanov"
+  license: "Not specified"
+
+sources:
+  - title: "A robust version of Harper's theorem"
+    authors:
+      - "Alexey Milovanov"
+    id: "https://mathoverflow.net/questions/391380/a-robust-version-of-harpers-theorem"
+    type: "MathOverflow question"
+    license: "CC-BY-SA-4.0"
+    author_contacted: "n/a (same author)"
+    prior_work: >-
+      The question starts from Harper's vertex-isoperimetric theorem and asks
+      for a structural stability conclusion for near minimizers.
+  - title: "Robust Harper Stability at the Exponential Scale"
+    authors:
+      - "Alexey Milovanov"
+    id: "docs/robust-harper-stability-at-the-exponential-scale.pdf"
+    type: "accompanying manuscript"
+    license: "Not specified"
+    author_contacted: "n/a (same author)"
+    prior_work: ""
+
+status:
+  scope: >-
+    Formalizes robust vertex-isoperimetric stability on the Boolean cube.  The
+    headline result is the coarse o(n) statement main_finite_skeleton.  The
+    repository also proves effective and class-uniform refinements.  The
+    separate AverageHarperStability development is outside this metadata
+    record.  The Comparator certificate currently covers only the coarse
+    headline statement.
+  # These counts refer to the proved project modules.  Challenge.lean has one
+  # intentional hole whose sole purpose is to state the Comparator challenge.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  comparator_challenge_sorry_count: 1
+  axioms:
+    - "propext"
+    - "Classical.choice"
+    - "Quot.sound"
+  main_results:
+    - declaration: "HarperStability.main_finite_skeleton"
+      file: "HarperStability/Assembly/Basic.lean"
+      sorry_count: 0
+      axioms:
+        - "propext"
+        - "Classical.choice"
+        - "Quot.sound"
+      comparator_config: "comparator/config.json"
+      literature_dependencies: []
+    - declaration: "HarperStability.main_finite_effective"
+      file: "HarperStability/Assembly/Effective.lean"
+      sorry_count: 0
+      axioms:
+        - "propext"
+        - "Classical.choice"
+        - "Quot.sound"
+      literature_dependencies: []
+    - declaration: "HarperStability.main_finite_effective_uniform"
+      file: "HarperStability/Assembly/EffectiveUniform.lean"
+      sorry_count: 0
+      axioms:
+        - "propext"
+        - "Classical.choice"
+        - "Quot.sound"
+      literature_dependencies: []
+
+automation:
+  methods:
+    - method: "human-directed multi-agent formalization"
+      models:
+        - "OpenAI Codex"
+        - "Google Gemini"
+        - "Anthropic Claude"
+        - "Aristotle"
+      framework: "custom interactive orchestration"
+      tool_setup: >-
+        Agents worked against the repository with iterative Lean/Lake compiler
+        feedback.  Independent agent passes were also used for statement and
+        exposition review.
+      cost:
+        wall_time: "not recorded"
+        spend_usd: "not recorded"
+        hardware: "local workstation and remote Linux VM"
+      notes: >-
+        Alexey Milovanov selected and interpreted the theorem, directed the
+        proof strategy, reviewed counterexamples and interface repairs, and
+        accepted the final statement.  Exact model versions and aggregate
+        token accounting were not preserved.
+      prompting_notes: >-
+        The workflow split the development into interfaces and proof layers,
+        repeatedly compiled proposed changes, audited theorem statements, and
+        used adversarial review before the final zero-sorry build.
+  spend_usd: "not recorded"
+  notes: >-
+    Historical orchestration scripts and logs are provenance aids, not part of
+    the trusted proof or the reproducible Lean build.
+
+fidelity:
+  divergences: >-
+    The Lean headline is a finite, uniform-over-a-class formulation of the
+    coarse o(n) stability theorem.  It deliberately gives no numerical rate;
+    the effective and effective-uniform declarations record sharper variants.
+    The accompanying paper presentation suppresses implementation-level
+    bookkeeping and slightly streamlines the proof.  No claim is made here
+    about the separate average-Harper formalization.
+
+review:
+  status: "self-assessed"
+  reviewers:
+    - "Alexey Milovanov"
+  notes: >-
+    The repository has undergone multiple AI-assisted semantic and Lean
+    reviews, but not an independent external mathematical peer review.
+    Comparator mechanically checks that the coarse trusted challenge matches
+    the proved declaration and uses only the listed axioms.
+
+alignment:
+  namespace: "HarperStability"
+  statements:
+    - source: "Robust Harper stability, coarse o(n) form"
+      lean: "HarperStability.main_finite_skeleton"
+      module: "HarperStability.Assembly.Basic"
+      status: "proved"
+    - source: "Effective robust Harper stability"
+      lean: "HarperStability.main_finite_effective"
+      module: "HarperStability.Assembly.Effective"
+      status: "proved"
+    - source: "Class-uniform effective robust Harper stability"
+      lean: "HarperStability.main_finite_effective_uniform"
+      module: "HarperStability.Assembly.EffectiveUniform"
+      status: "proved"
+
+acknowledgements: >-
+  Formalization developed by Alexey Milovanov with AI assistance, using Lean
+  4, Mathlib, and leanprover/comparator.

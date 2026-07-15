@@ -1,0 +1,45 @@
+# Comparator certificate for robust Harper stability
+
+This repository uses
+[`leanprover/comparator`](https://github.com/leanprover/comparator) to separate
+the statement a reviewer must read from the AI-assisted proof.
+
+- [`../Challenge.lean`](../Challenge.lean) imports only Mathlib and contains
+  the complete trusted statement, including every custom definition used by
+  its type.
+- [`../Solution.lean`](../Solution.lean) connects that statement directly to
+  `HarperStability.main_finite_skeleton`.
+- [`config.json`](config.json) asks Comparator to check the bridge while
+  permitting only `propext`, `Quot.sound`, and `Classical.choice`.
+
+Comparator checks that the solution proves exactly the challenge statement,
+uses no other axioms, and is accepted by the Lean kernel.  A human must still
+read `Challenge.lean` and decide that it expresses the intended mathematics.
+The one `sorry` in that file is the intentional challenge hole; the proved
+formalization itself contains none.
+
+The trusted configuration also includes `lakefile.lean`,
+`lake-manifest.json`, and the checker/tool commits pinned by the workflow.
+Under the review convention used here, Mathlib and the Lean kernel are already
+trusted; the project proof files remain the material being checked.
+
+The `Comparator` GitHub Actions workflow performs the check in a fresh Linux
+runner.  It does not restore a project build cache or compile `Solution.lean`
+before Comparator, and it adds the current upstream `systemd-run` sandbox
+hardening.
+
+For a manual Linux run, obtain the `v4.28.0` tags of Comparator and
+lean4export, install the pinned/current landrun described by the upstream
+Comparator documentation, prepare only the trusted dependency cache, and run:
+
+```bash
+scripts/verify_with_comparator.sh \
+  /path/to/leanprover-comparator-v4.28.0 \
+  /path/to/lean4export-v4.28.0
+```
+
+Use a fresh checkout: compiling `Solution.lean` before Comparator invalidates
+the adversarial-checking assumption.  For the strongest boundary, place the
+manual command inside the `systemd-run` wrapper documented upstream with
+`PrivateNetwork=yes`, `NoNewPrivileges=yes`, and
+`RestrictAddressFamilies=~AF_UNIX`.
