@@ -3,8 +3,7 @@ Copyright (c) 2026 Alexey Milovanov. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alexey Milovanov
 -/
-import Mathlib
-import BooleanIsoperimetry.Macaulay
+import Mathlib.Tactic.FinCases
 import BooleanIsoperimetry.Shadow
 
 /-!
@@ -1509,9 +1508,9 @@ lemma harper_extremal_step_nested (n : ℕ)
     (hq_split : CascadeSplit n q q0 q1)
     (ha_split : CascadeSplit n a a0 a1)
     (hb_split : CascadeSplit n b b0 b1) :
-    max (max (H n p0) p1 + max (H n p1) p0) q + 
+    max (max (H n p0) p1 + max (H n p1) p0) q +
     max (max (H n q0) q1 + max (H n q1) q0) p ≤
-    max (max (H n a0) a1 + max (H n a1) a0) b + 
+    max (max (H n a0) a1 + max (H n a1) a0) b +
     max (max (H n b0) b1 + max (H n b1) b0) a := by
   by_cases hq_zero : q = 0
   · exact harper_extremal_step_nested_q_zero n ih ha hb hcasc hq_zero
@@ -1562,7 +1561,7 @@ lemma harper_extremal_step (n : ℕ)
   have h_nested := harper_extremal_step_nested n ih ha hb hcasc
     hp0 hp1 hq0 hq1 ha0 ha1 hb0 hb1
     hp_split hq_split ha_split hb_split
-  rwa [← H_succ_cascade hp_split, ← H_succ_cascade hq_split, 
+  rwa [← H_succ_cascade hp_split, ← H_succ_cascade hq_split,
        ← H_succ_cascade ha_split, ← H_succ_cascade hb_split] at h_nested
 
 /--
@@ -2070,7 +2069,7 @@ lemma H_inequality_core :
 
 /--
 The core Kruskal-Katona / Macaulay optimization inequality for the cascade split.
-For any canonical split `(p, q)` of `a + b`, the cross-sum of their boundary sizes 
+For any canonical split `(p, q)` of `a + b`, the cross-sum of their boundary sizes
 is bounded by the sum of boundary bounds for the original sizes `a` and `b`.
 -/
 lemma macaulay_optimization {n a b p q : ℕ} (ha : a ≤ 2 ^ n) (hb : b ≤ 2 ^ n)

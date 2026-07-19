@@ -3,11 +3,7 @@ Copyright (c) 2026 Alexey Milovanov. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alexey Milovanov
 -/
-import Mathlib
-import BooleanIsoperimetry.Cube
-import BooleanIsoperimetry.Cascade
 import BooleanIsoperimetry.SimplicialCompression
-import BooleanIsoperimetry.KruskalKatona
 import BooleanIsoperimetry.LayerWindows
 
 /-!
@@ -588,6 +584,7 @@ def IsPaperColexShiftMove {N : ℕ}
     (A A' : Finset (Cube N)) : Prop :=
   IsColexShift A A' ∨ ∃ i j, IsPaperColexBlockMove A A' i j
 
+/-- A nontrivial level-changing block move satisfying the paper's residual conditions. -/
 def IsPaperLevelBlockMove {N : ℕ}
     (A A' : Finset (Cube N)) (U V : Cube N) : Prop :=
   A' = familyUp U V A ∧
@@ -597,6 +594,7 @@ def IsPaperLevelBlockMove {N : ℕ}
   (∀ x ∈ V, ∃ y ∈ U, familyUp (U.erase y) (V.erase x) A = A) ∧
   (∀ x ∈ U, ∃ y ∈ V, familyUp (V.erase y) (U.erase x) Aᶜˢ = Aᶜˢ)
 
+/-- One admissible residual compression step in the paper's reduction. -/
 inductive IsPaperResidualStep {N : ℕ}
     (A : Finset (Cube N)) : Finset (Cube N) → Prop
   | colexShift {A'} :
@@ -611,6 +609,7 @@ inductive IsPaperResidualStep {N : ℕ}
   | levelBlock {A' U V} :
       IsPaperLevelBlockMove A A' U V → IsPaperResidualStep A A'
 
+/-- The transitive closure of admissible residual compression steps. -/
 def IsPaperResidualSequence {N : ℕ}
     (A A' : Finset (Cube N)) : Prop :=
   Relation.TransGen IsPaperResidualStep A A'
@@ -2278,18 +2277,23 @@ blueprint records that single-layer KK plus pure cascade telescoping is
 insufficient on its own: the multi-layer Macaulay summation is the remaining
 content. -/
 structure CascadeLayerData (N r p q : ℕ) : Type where
-  p_rem : ℕ
-  q_rem : ℕ
-  hp : p = binomPrefix N r + p_rem
-  hq : q = binomPrefix N (r - 1) + q_rem
-  hrange : p_rem ≤ Nat.choose N r ∧ q_rem ≤ Nat.choose N (r - 1)
+  /-- The remainder of `p` after the binomial prefix through layer `r - 1`. -/
+  pRem : ℕ
+  /-- The remainder of `q` after the binomial prefix through layer `r - 2`. -/
+  qRem : ℕ
+  hp : p = binomPrefix N r + pRem
+  hq : q = binomPrefix N (r - 1) + qRem
+  hrange : pRem ≤ Nat.choose N r ∧ qRem ≤ Nat.choose N (r - 1)
 
+/-- The assertion that `p` and `q` lie in the corresponding adjacent cascade windows. -/
 def CascadeLayerWindow (N r p q : ℕ) : Prop :=
   Nonempty (CascadeLayerData N r p q)
 
+/-- The signed slack between two pair-layer window costs. -/
 noncomputable def PairLayerWindowSlack (N r a b p q : ℕ) : ℤ :=
   (PairLayerWindowCost N r a b : ℤ) - (PairLayerWindowCost N r p q : ℤ)
 
+/-- The total pair-window slack summed over all relevant layers. -/
 noncomputable def PairWindowSlackSum (N a b p q : ℕ) : ℤ :=
   ∑ r ∈ Finset.range (N + 2), PairLayerWindowSlack N r a b p q
 

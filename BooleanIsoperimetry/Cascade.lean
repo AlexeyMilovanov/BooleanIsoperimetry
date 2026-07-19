@@ -3,7 +3,8 @@ Copyright (c) 2026 Alexey Milovanov. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alexey Milovanov
 -/
-import Mathlib
+import Mathlib.Algebra.BigOperators.Module
+import Mathlib.Data.Nat.Choose.Sum
 import BooleanIsoperimetry.Cube
 
 /-!
@@ -31,9 +32,11 @@ def IsBinomialCascade (n k r t : ℕ) : Prop :=
   k = binomPrefix n r + t ∧
   (t < Nat.choose n r ∨ r = n + 1)
 
+/-- The lower-slice size determined by cascade parameters `n`, `r`, and `t`. -/
 def cascadeSlice0Value (n r t : ℕ) : ℕ :=
   binomPrefix n r + (t - choosePred n r)
 
+/-- The upper-slice size determined by cascade parameters `n`, `r`, and `t`. -/
 def cascadeSlice1Value (n r t : ℕ) : ℕ :=
   binomPrefix n (r - 1) + min t (choosePred n r)
 
@@ -798,7 +801,7 @@ lemma H_increment_lower (n p : ℕ) (hp : p + 1 ≤ 2 ^ n) :
             tsub_le_iff_right]
           rw [show Finset.filter (fun j => ∀ y ∈ w, j < y) Finset.univ =
               Finset.Iio (Finset.min' w hw_nonempty) from ?_]
-          · simp +arith +decide at * ; linarith
+          · simp +arith +decide at *; linarith
           · ext; simp [Finset.mem_Iio]
         · intro x hx y hy; simp_all +decide [Fin.ext_iff, Finset.ext_iff]
           grind +extAll
@@ -830,8 +833,8 @@ lemma H_increment_lower (n p : ℕ) (hp : p + 1 ≤ 2 ^ n) :
     omega
   · -- Since `w` is empty, we have `p = 0`.
     have hp_zero : p = 0 := by
-      rw [← hw, show w = ∅ by aesop] ; simp +decide [rank]
+      rw [← hw, show w = ∅ by aesop]; simp +decide [rank]
       simp +decide only [simplicialLt, not_and, not_not]
       simp +decide [simplicialLe]
     simp_all +decide only [zero_add, Finset.not_nonempty_iff_eq_empty, H_one, add_zero, ge_iff_le]
-    rw [H_zero] ; linarith
+    rw [H_zero]; linarith

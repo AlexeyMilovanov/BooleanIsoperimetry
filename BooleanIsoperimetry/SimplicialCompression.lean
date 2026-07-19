@@ -3,10 +3,7 @@ Copyright (c) 2026 Alexey Milovanov. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alexey Milovanov
 -/
-import Mathlib
 import BooleanIsoperimetry.Cube
-import BooleanIsoperimetry.Cascade
-import BooleanIsoperimetry.Macaulay
 
 /-!
 # Simplicial coordinate compression
@@ -32,11 +29,13 @@ def IsCoordinateDown {N : ℕ} (i : Fin N) (B B' : Finset (Cube N)) : Prop :=
   B'.card = B.card ∧
   ∀ x, x ∈ B' ↔ (x ∈ B ∧ (i ∉ x ∨ x.erase i ∈ B)) ∨ (i ∉ x ∧ x ∉ B ∧ insert i x ∈ B)
 
+/-- Coordinate-up compression along `i`. -/
 noncomputable def coordinateUp {N : ℕ} (i : Fin N) (A : Finset (Cube N)) : Finset (Cube N) :=
   let A_kept := A.filter (fun x => i ∈ x ∨ insert i x ∈ A)
   let A_moved := (A.filter (fun x => i ∉ x ∧ insert i x ∉ A)).image (fun x => insert i x)
   A_kept ∪ A_moved
 
+/-- Coordinate-down compression along `i`. -/
 noncomputable def coordinateDown {N : ℕ} (i : Fin N) (A : Finset (Cube N)) : Finset (Cube N) :=
   let A_kept := A.filter (fun x => i ∉ x ∨ erase x i ∈ A)
   let A_moved := (A.filter (fun x => i ∈ x ∧ erase x i ∉ A)).image (fun x => erase x i)

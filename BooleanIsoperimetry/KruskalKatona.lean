@@ -3,9 +3,7 @@ Copyright (c) 2026 Alexey Milovanov. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alexey Milovanov
 -/
-import Mathlib
-import BooleanIsoperimetry.Cube
-import BooleanIsoperimetry.Cascade
+import Mathlib.Combinatorics.SetFamily.KruskalKatona
 import BooleanIsoperimetry.Macaulay
 
 /-!
@@ -33,6 +31,7 @@ forced the cross-slice cascade leaf to merely *reference* Kruskal–Katona witho
 being able to use it.  Relocated from the former `SetFamilyShadow.lean` (which is
 now a thin re-export). -/
 
+/-- The family of all `r`-element vertices in the `N`-cube. -/
 def layer (N r : ℕ) : Finset (Cube N) :=
   Finset.univ.filter (fun x => x.card = r)
 
@@ -42,9 +41,11 @@ here so the Kruskal–Katona core is strictly upstream of `Shadow.lean`):
 noncomputable def upperShadowVal (N r t : ℕ) : ℕ :=
   H N (binomPrefix N r + t) - binomPrefix N (r + 1)
 
+/-- The layer-`r` part of the simplicial initial segment with local size `t`. -/
 noncomputable def layerInitSeg (N r t : ℕ) : Finset (Cube N) :=
   (simplicialInitSeg N (binomPrefix N r + t)).filter (fun x => x.card = r)
 
+/-- The layer-`r + 1` upper shadow of a uniform family in layer `r`. -/
 noncomputable def upperLayerShadow (N r : ℕ) (A : Finset (Cube N)) : Finset (Cube N) :=
   (Finset.upShadow A).filter (fun x => x.card = r + 1)
 

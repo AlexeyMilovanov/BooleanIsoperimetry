@@ -3,7 +3,6 @@ Copyright (c) 2026 Alexey Milovanov. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alexey Milovanov
 -/
-import Mathlib
 import BooleanIsoperimetry.Cascade
 
 /-!
@@ -391,7 +390,7 @@ lemma harper_bc_min_q_zero_core (n : ℕ) {a b p : ℕ}
   rcases hcasc with ⟨ r, t, hr, rfl, ht ⟩;
   rcases r with ( _ | r ) <;>
     simp +arith +decide only [cascadeSlice1Value, zero_tsub, add_tsub_cancel_right] at ht ⊢;
-  · cases hr ; norm_num [ binomPrefix, choosePred ] at *;
+  · cases hr; norm_num [ binomPrefix, choosePred ] at *;
     aesop;
   · rcases r with ( _ | r ) <;>
     simp +arith +decide only [binomPrefix_succ, choosePred, zero_add] at ht ⊢;
@@ -403,7 +402,7 @@ lemma harper_bc_min_q_zero_core (n : ℕ) {a b p : ℕ}
         Finset.range_one, Finset.sum_singleton, Nat.choose_zero_right, zero_tsub,
         add_zero, Order.add_one_le_iff] at hpq ⊢;
       rcases a with ( _ | _ | a ) <;> rcases b with ( _ | _ | b ) <;> simp +arith +decide at *;
-    · rw [ eq_comm ] at ht ; simp_all +arith +decide [ binomPrefix ];
+    · rw [ eq_comm ] at ht; simp_all +arith +decide [ binomPrefix ];
       grind +suggestions
 
 lemma harper_bc_min_q_zero (n : ℕ)
@@ -621,7 +620,7 @@ lemma cascade_split_binomPrefix (n r : ℕ) (hr : 1 ≤ r) (hrn : r ≤ n + 1) :
 The boundary of a full binomial prefix (a complete collection of layers) is exactly
 the next full binomial prefix, evaluated algebraically on `H`.
 -/
-lemma H_binomPrefix (n r : ℕ) (hr : 1 ≤ r) : 
+lemma H_binomPrefix (n r : ℕ) (hr : 1 ≤ r) :
     H n (binomPrefix n r) = binomPrefix n (r + 1) := by
   induction n generalizing r with
   | zero =>

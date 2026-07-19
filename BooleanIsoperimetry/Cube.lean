@@ -3,7 +3,9 @@ Copyright (c) 2026 Alexey Milovanov. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alexey Milovanov
 -/
-import Mathlib
+import Mathlib.Algebra.Order.Ring.GeomSum
+import Mathlib.Data.Nat.Digits.Defs
+import Mathlib.Tactic.IntervalCases
 
 /-!
 # Boolean cube basics
@@ -15,14 +17,14 @@ function `H`.
 
 open scoped BigOperators
 
--- 1. Boolean Cube definition (vertex as a set of active indices)
+/-- A vertex of the `n`-dimensional Boolean cube, represented by its active coordinates. -/
 abbrev Cube (n : ℕ) := Finset (Fin n)
 
--- 2. Hamming metric (size of symmetric difference)
+/-- The Hamming distance between two Boolean-cube vertices. -/
 noncomputable def hDist {n : ℕ} (x y : Cube n) : ℕ :=
   (symmDiff x y).card
 
--- 3. r-neighborhood of a set
+/-- The closed Hamming `r`-neighborhood of a family of cube vertices. -/
 noncomputable def neighborhood {n : ℕ} (r : ℕ) (A : Finset (Cube n)) : Finset (Cube n) :=
   Finset.univ.filter (fun v => ∃ u ∈ A, hDist u v ≤ r)
 
@@ -31,18 +33,19 @@ lemma mem_neighborhood_iff {n r : ℕ} {A : Finset (Cube n)} {v : Cube n} :
   v ∈ neighborhood r A ↔ ∃ u ∈ A, hDist u v ≤ r := by
   simp [neighborhood]
 
--- 4. Hamming Ball centered at the origin
+/-- The closed Hamming ball of radius `r` centered at the origin. -/
 noncomputable def hammingBall {n : ℕ} (r : ℕ) : Finset (Cube n) :=
   Finset.univ.filter (fun v => v.card ≤ r)
 
--- 5. Binary encoding for simplicial ordering
+/-- The binary encoding used to break ties in the simplicial order. -/
 noncomputable def cubeToNat {n : ℕ} (x : Cube n) : ℕ :=
   ∑ i ∈ x, 2 ^ (i : ℕ)
 
--- 6. Simplicial order definition (weight first, then reverse binary/colex)
+/-- The non-strict simplicial order: first by weight, then by reverse binary order. -/
 def simplicialLe {n : ℕ} (x y : Cube n) : Prop :=
   x.card < y.card ∨ (x.card = y.card ∧ cubeToNat y ≤ cubeToNat x)
 
+/-- The strict simplicial order on Boolean-cube vertices. -/
 def simplicialLt {n : ℕ} (x y : Cube n) : Prop :=
   simplicialLe x y ∧ ¬simplicialLe y x
 
@@ -189,10 +192,12 @@ lemma simplicialLe_total {n : ℕ} (a b : Cube n) : simplicialLe a b ∨ simplic
 -- ==========================================
 
 open Classical in
+/-- The zero-based position of a vertex in the simplicial order. -/
 noncomputable def rank {n : ℕ} (x : Cube n) : ℕ :=
   (Finset.univ.filter (fun y => simplicialLt y x)).card
 
 open Classical in
+/-- The first `k` vertices of the `n`-cube in simplicial order. -/
 noncomputable def simplicialInitSeg (n : ℕ) (k : ℕ) : Finset (Cube n) :=
   Finset.univ.filter (fun x => rank x < k)
 
@@ -249,7 +254,7 @@ lemma rank_image_eq {n : ℕ} :
     Finset.univ.image (@rank n) = Finset.range (2 ^ n) := by
   fapply Finset.eq_of_subset_of_card_le
   · exact Finset.image_subset_iff.mpr fun x _ => Finset.mem_range.mpr (rank_lt_two_pow x)
-  · rw [Finset.card_image_of_injective _ rank_injective] ; simp +decide [Finset.card_univ]
+  · rw [Finset.card_image_of_injective _ rank_injective]; simp +decide [Finset.card_univ]
 
 /-
 The cardinality of an initial segment.
@@ -276,19 +281,19 @@ lemma card_simplicialInitSeg {n k : ℕ} :
 -- 11. DIMENSIONAL SLICING (n → n + 1)
 -- ==========================================
 
--- Embedding 0: Take vertex from n-cube, append 0 (no new bit)
+/-- Embed an `n`-cube vertex in dimension `n + 1` with last coordinate zero. -/
 noncomputable def embed0 {n : ℕ} (x : Cube n) : Cube (n + 1) :=
   x.image Fin.castSucc
 
--- Embedding 1: Take vertex from n-cube, append 1 (add last bit)
+/-- Embed an `n`-cube vertex in dimension `n + 1` with last coordinate one. -/
 noncomputable def embed1 {n : ℕ} (x : Cube n) : Cube (n + 1) :=
   insert (Fin.last n) (x.image Fin.castSucc)
 
--- Lower slice (A₀): all x from n-cube whose embed0 is in A
+/-- The lower slice of a family in dimension `n + 1`. -/
 noncomputable def slice0 {n : ℕ} (A : Finset (Cube (n + 1))) : Finset (Cube n) :=
   Finset.univ.filter (fun x => embed0 x ∈ A)
 
--- Upper slice (A₁): all x from n-cube whose embed1 is in A
+/-- The upper slice of a family in dimension `n + 1`. -/
 noncomputable def slice1 {n : ℕ} (A : Finset (Cube (n + 1))) : Finset (Cube n) :=
   Finset.univ.filter (fun x => embed1 x ∈ A)
 
@@ -309,7 +314,7 @@ lemma slice_card_add {n : ℕ} (A : Finset (Cube (n + 1))) :
       · refine Or.inr ⟨ Finset.univ.filter (fun i => Fin.castSucc i ∈ x), ?_, ?_ ⟩ <;>
           simp_all +decide only [Finset.ext_iff, embed1, Finset.mem_insert,
             Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
-        · convert h using 2 ; ext i ; induction i using Fin.lastCases <;> aesop
+        · convert h using 2; ext i; induction i using Fin.lastCases <;> aesop
         · intro a; induction a using Fin.lastCases <;> aesop
       · unfold embed0 embed1 at h; aesop
     · constructor
@@ -346,7 +351,7 @@ Helpers for neighborhood_succ
 lemma hDist_embed0_embed0 {n : ℕ} (x y : Cube n) :
     hDist (embed0 x) (embed0 y) = hDist x y := by
   unfold hDist
-  convert Finset.card_image_of_injective _ (Fin.castSucc_injective n) using 2 ; ext
+  convert Finset.card_image_of_injective _ (Fin.castSucc_injective n) using 2; ext
   simp +decide only [symmDiff, Finset.sup_eq_union', Finset.mem_union, Finset.mem_sdiff,
     Finset.mem_image]
   unfold embed0; aesop
@@ -452,7 +457,7 @@ lemma slice1_neighborhood {n : ℕ} (A : Finset (Cube (n + 1))) :
         true_and, neighborhood]
     · use embed1 u, hu; simp_all +decide [hDist_embed1_embed1]
     · use embed0 v, hv, by
-        rw [hDist_embed0_embed1] ; norm_num
+        rw [hDist_embed0_embed1]; norm_num
         unfold hDist; aesop
 
 /-
@@ -468,7 +473,7 @@ lemma neighborhood_succ {n : ℕ} (A : Finset (Cube (n + 1))) :
 -- Helpers for initial_segment_optimal
 -- ==========================================
 
--- Function H(n, k): Size of the boundary of an ideal initial segment
+/-- The size of the radius-one neighborhood of the simplicial initial segment of size `k`. -/
 noncomputable def H (n k : ℕ) : ℕ :=
   (neighborhood 1 (simplicialInitSeg n k)).card
 
@@ -514,7 +519,7 @@ lemma card_initSeg_union {n a b : ℕ} (ha : a ≤ 2 ^ n) (hb : b ≤ 2 ^ n) :
     simp_all +decide only [initSeg_nested, Finset.union_eq_right.mpr, sup_of_le_right,
       sup_of_le_left]
   · rw [card_simplicialInitSeg, min_eq_left hb]
-  · rw [Finset.union_eq_left.mpr (initSeg_nested ‹_›), card_simplicialInitSeg] ; aesop
+  · rw [Finset.union_eq_left.mpr (initSeg_nested ‹_›), card_simplicialInitSeg]; aesop
 
 /-
 ==========================================
@@ -531,8 +536,7 @@ lemma rank_mono {n : ℕ} {a b : Cube n} (h : simplicialLe a b) : rank a ≤ ran
       exact ⟨ h, fun h' => hab <| simplicialLe_antisymm _ _ h h' ⟩
     exact le_of_lt (rank_strictMono h_lt)
 
--- gShift removes the minimum element of a vertex (the lowest-index active bit).
--- It maps a vertex to the smallest (lowest-rank) vertex in its closed Hamming ball.
+/-- Remove the least active coordinate, giving the lowest-rank vertex in the closed unit ball. -/
 noncomputable def gShift {n : ℕ} (v : Cube n) : Cube n :=
   if h : v.Nonempty then v.erase (v.min' h) else v
 
@@ -844,7 +848,7 @@ Both embeddings are monotone for the simplicial order.
 lemma embed0_mono {n : ℕ} {x y : Cube n} (h : simplicialLe x y) :
     simplicialLe (embed0 x) (embed0 y) := by
   unfold simplicialLe at *
-  rw [embed0_card, embed0_card, embed0_cubeToNat, embed0_cubeToNat] ; aesop
+  rw [embed0_card, embed0_card, embed0_cubeToNat, embed0_cubeToNat]; aesop
 
 lemma embed1_mono {n : ℕ} {x y : Cube n} (h : simplicialLe x y) :
     simplicialLe (embed1 x) (embed1 y) := by
@@ -932,8 +936,10 @@ lemma H_succ_slice {n k : ℕ} :
 -- MACAULAY / BINOMIAL CASCADE LAYER
 -- ==========================================
 
+/-- The sum of the first `r` binomial coefficients in row `n`. -/
 def binomPrefix (n r : ℕ) : ℕ :=
   (Finset.range r).sum (fun i => Nat.choose n i)
 
+/-- The binomial coefficient immediately preceding layer `r`, with value zero at `r = 0`. -/
 def choosePred (n r : ℕ) : ℕ :=
   if r = 0 then 0 else Nat.choose n (r - 1)
