@@ -8,10 +8,12 @@ cube with a fixed cardinality `k`, the initial segment in simplicial order has
 the smallest closed Hamming-1 neighborhood.
 
 ```lean
-theorem harper_theorem
-    (n : Nat) (A : Finset (Cube n)) (k : Nat) (hk : A.card = k) :
-    (neighborhood 1 (simplicialInitSeg n k)).card <=
-      (neighborhood 1 A).card
+theorem BooleanIsoperimetry.harper_theorem
+    (n : Nat) (A : Finset (BooleanIsoperimetry.Cube n))
+    (k : Nat) (hk : A.card = k) :
+    (BooleanIsoperimetry.neighborhood 1
+      (BooleanIsoperimetry.simplicialInitSeg n k)).card <=
+      (BooleanIsoperimetry.neighborhood 1 A).card
 ```
 
 The formalization follows the short proof of Harper's theorem by
@@ -29,10 +31,10 @@ presents the Frankl-Furedi proof in a more expanded form.
 
 ## Status
 
-- Lean version: `leanprover/lean4:v4.31.0`.
+- Lean version: `leanprover/lean4:v4.32.0-rc1`.
 - Mathlib version: pinned by `lake-manifest.json`.
 - The project builds with `lake build`.
-- The formal proof of `harper_theorem` is sorry-free.
+- The formal proof of `BooleanIsoperimetry.harper_theorem` is sorry-free.
 - The active Lean source is intended to be warning-free and mathlib-style.
 
 ## Building
@@ -271,7 +273,7 @@ Main contents:
 - induction and case-split lemmas for the Harper recurrence;
 - `harper_bc_min`;
 - `harper_core`;
-- the final public theorem `harper_theorem`.
+- the final public theorem `BooleanIsoperimetry.harper_theorem`.
 
 This is the endpoint of the formalization.  If you only want to inspect the
 final statement and its immediate dependencies, start here and follow the
@@ -289,7 +291,7 @@ the standard mathlib linter set, and keeps `relaxedAutoImplicit` disabled.
 Pins the Lean toolchain:
 
 ```text
-leanprover/lean4:v4.31.0
+leanprover/lean4:v4.32.0-rc1
 ```
 
 ### `lake-manifest.json`

@@ -69,30 +69,6 @@ lemma binomPrefix_eq_card_lt (N r : ℕ) :
     rw [Finset.mem_powersetCard] at hx hy
     omega
 
-lemma rank_lt_binomPrefix_iff {N r : ℕ} {x : Cube N} :
-    rank x < binomPrefix N r ↔ x.card < r := by
-  have hS_eq : Finset.univ.filter (fun y : Cube N => y.card < r) =
-      simplicialInitSeg N (binomPrefix N r) := by
-    have hS : ∀ a b : Cube N, simplicialLe a b →
-        b ∈ Finset.univ.filter (fun y : Cube N => y.card < r) →
-        a ∈ Finset.univ.filter (fun y : Cube N => y.card < r) := by
-      intro a b hab hb
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hb ⊢
-      unfold simplicialLe at hab
-      rcases hab with hlt | ⟨heq, _⟩
-      · omega
-      · omega
-    have h_eq := downwardClosed_eq_initSeg hS
-    rw [← binomPrefix_eq_card_lt N r] at h_eq
-    exact h_eq
-  have hx : x ∈ Finset.univ.filter (fun y : Cube N => y.card < r) ↔
-      x ∈ simplicialInitSeg N (binomPrefix N r) := by
-    rw [hS_eq]
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx
-  unfold simplicialInitSeg at hx
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx
-  exact hx.symm
-
 lemma mem_layerInitSeg_iff {N r t : ℕ} {x : Cube N} :
     x ∈ layerInitSeg N r t ↔ x.card = r ∧ rank x < binomPrefix N r + t := by
   simp [layerInitSeg, simplicialInitSeg]
@@ -115,11 +91,11 @@ lemma layerInitSeg_card {N r t : ℕ} (ht : t ≤ Nat.choose N r) :
           exact Nat.add_le_add_left ht _
         exact lt_of_lt_of_le hhi hs
       have hcard_lt_succ : x.card < r + 1 :=
-        (rank_lt_binomPrefix_iff (N := N) (r := r + 1) (x := x)).mp hlt_succ
+        (rank_lt_binomPrefix_iff (n := N) (c := r + 1) x).mp hlt_succ
       have hnot_lt : ¬ x.card < r := by
         intro hxlt
         have hrank_lt : rank x < binomPrefix N r :=
-          (rank_lt_binomPrefix_iff (N := N) (r := r) (x := x)).mpr hxlt
+          (rank_lt_binomPrefix_iff (n := N) (c := r) x).mpr hxlt
         exact not_lt_of_ge hlo hrank_lt
       exact ⟨by omega, hhi⟩
   have himage : Finset.image rank (layerInitSeg N r t)
@@ -174,7 +150,7 @@ lemma simplicialInitSeg_decomp {N r t : ℕ} (ht : t ≤ Nat.choose N r) :
       have h_rank_ge : binomPrefix N (r + 1) ≤ rank x := by
         have h1 : ¬(x.card < r + 1) := by omega
         have h2 : ¬(rank x < binomPrefix N (r + 1)) :=
-          mt (rank_lt_binomPrefix_iff (N := N) (r := r + 1)).mp h1
+          mt (rank_lt_binomPrefix_iff (n := N) (c := r + 1) x).mp h1
         omega
       have h_rank_lt : binomPrefix N r + t ≤ binomPrefix N (r + 1) := by
         have h_eq : binomPrefix N r + Nat.choose N r = binomPrefix N (r + 1) :=
@@ -184,7 +160,7 @@ lemma simplicialInitSeg_decomp {N r t : ℕ} (ht : t ≤ Nat.choose N r) :
     rcases lt_or_eq_of_le h_card_le with hlt | heq
     · left
       have h_rank_lt : rank x < binomPrefix N r :=
-        (rank_lt_binomPrefix_iff (N := N) (r := r)).mpr hlt
+        (rank_lt_binomPrefix_iff (n := N) (c := r) x).mpr hlt
       exact h_rank_lt
     · right
       exact ⟨heq, by simpa [heq] using binomPrefix_card_le_rank x, hrank⟩
@@ -288,7 +264,7 @@ lemma upperShadowVal_eq_card_upperLayerShadow {N r t : ℕ} (hr : 1 ≤ r)
         rcases lt_or_eq_of_le h_card_le with hlt | heq
         · left
           have h_rank_lt : rank x < binomPrefix N (r + 1) :=
-            (rank_lt_binomPrefix_iff (N := N) (r := r + 1)).mpr hlt
+            (rank_lt_binomPrefix_iff (n := N) (c := r + 1) x).mpr hlt
           simp only [simplicialInitSeg, Finset.mem_filter, Finset.mem_univ, true_and]
           exact h_rank_lt
         · right

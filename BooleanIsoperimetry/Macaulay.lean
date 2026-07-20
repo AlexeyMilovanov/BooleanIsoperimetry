@@ -14,6 +14,7 @@ the nested-cascade inequalities used by the final minimization argument.
 
 open scoped BigOperators
 
+namespace BooleanIsoperimetry
 
 /--
 The first forward difference of the closed-neighborhood profile of the
@@ -1054,3 +1055,5 @@ lemma CascadeInterleaves.lower_succ
   rw [splitPrefixMass_succ_of_cascadeSplits ha hb] at h_ineq
   rw [splitPrefixMass_succ_of_cascadeSplits hp hq] at h_ineq
   exact h_ineq
+
+end BooleanIsoperimetry

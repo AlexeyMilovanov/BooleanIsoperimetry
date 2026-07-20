@@ -17,6 +17,8 @@ function `H`.
 
 open scoped BigOperators
 
+namespace BooleanIsoperimetry
+
 /-- A vertex of the `n`-dimensional Boolean cube, represented by its active coordinates. -/
 abbrev Cube (n : ℕ) := Finset (Fin n)
 
@@ -943,3 +945,5 @@ def binomPrefix (n r : ℕ) : ℕ :=
 /-- The binomial coefficient immediately preceding layer `r`, with value zero at `r = 0`. -/
 def choosePred (n r : ℕ) : ℕ :=
   if r = 0 then 0 else Nat.choose n (r - 1)
+
+end BooleanIsoperimetry

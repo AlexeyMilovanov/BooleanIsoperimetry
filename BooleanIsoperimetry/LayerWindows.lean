@@ -319,12 +319,12 @@ lemma suffix_layerWindowRemainder_eq (N m k : ℕ) (hm : m ≤ 2 ^ N) :
         intro hmin
         have hrank_binom : rank x < binomPrefix N k := lt_of_lt_of_le hmin (min_le_right _ _)
         have hcard_lt : x.card < k :=
-          (rank_lt_binomPrefix_iff (N := N) (r := k) (x := x)).mp hrank_binom
+          (rank_lt_binomPrefix_iff (n := N) (c := k) x).mp hrank_binom
         omega
       · rintro ⟨hrank, hnot⟩
         refine ⟨hrank, ?_⟩
         exact Nat.le_of_not_lt fun hcard_lt =>
-          hnot (lt_min hrank ((rank_lt_binomPrefix_iff (N := N) (r := k) (x := x)).mpr hcard_lt))
+          hnot (lt_min hrank ((rank_lt_binomPrefix_iff (n := N) (c := k) x).mpr hcard_lt))
     rw [hsum, hfilter]
   rw [h_card, Finset.card_sdiff]
   rw [Finset.inter_eq_left.mpr, card_simplicialInitSeg, card_simplicialInitSeg]

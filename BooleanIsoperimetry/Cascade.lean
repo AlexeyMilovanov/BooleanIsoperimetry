@@ -17,6 +17,7 @@ for the Harper boundary function `H`.
 
 open scoped BigOperators
 
+namespace BooleanIsoperimetry
 
 /--
 `IsBinomialCascade n k r t` is the canonical layer decomposition of `k`
@@ -838,3 +839,5 @@ lemma H_increment_lower (n p : ℕ) (hp : p + 1 ≤ 2 ^ n) :
       simp +decide [simplicialLe]
     simp_all +decide only [zero_add, Finset.not_nonempty_iff_eq_empty, H_one, add_zero, ge_iff_le]
     rw [H_zero]; linarith
+
+end BooleanIsoperimetry

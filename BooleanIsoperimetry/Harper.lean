@@ -15,6 +15,7 @@ recurrence layers into the final sorry-free proof of Harper's theorem.
 
 open scoped BigOperators
 
+namespace BooleanIsoperimetry
 
 /-- The number of vertices whose `gShift` rank lies in the half-open interval
 `[lo, hi)`.  This is the set-level form of an `HIncrement` window. -/
@@ -2180,3 +2181,5 @@ theorem harper_theorem (n : ℕ) (A : Finset (Cube n)) (k : ℕ) (hk : A.card = 
             (union_initSeg_card_le ih1 rfl (card_cube_le A0))
       _ = (neighborhood 1 A).card := by
           rw [neighborhood_succ A]
+
+end BooleanIsoperimetry
