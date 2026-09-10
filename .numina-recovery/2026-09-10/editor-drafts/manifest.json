@@ -1,0 +1,16 @@
+{
+  "note": "Preserved Fuse editor snapshots. Some are older than the current branch; compare before restoring. Original branch contents were not overwritten.",
+  "drafts": [
+    {
+      "workspace_id": "1f81e089-50c1-4b1a-bdb0-a5350399bf73",
+      "original_branch": "refs/heads/numina/harper-theorem",
+      "original_blueprint_file": null,
+      "blueprint_name": "harper-theorem",
+      "project_subdir": "",
+      "saved_at": "2026-05-12 21:36:23.286133+00:00",
+      "revision": 1,
+      "audit_status": "repository_inaccessible",
+      "recovery_file": ".numina-recovery/2026-09-10/editor-drafts/1f81e089-50c1-4b1a-bdb0-a5350399bf73.tex"
+    }
+  ]
+}
